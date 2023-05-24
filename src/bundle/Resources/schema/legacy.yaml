@@ -1,0 +1,26 @@
+tables:
+  wzh_scheduled_content:
+    id:
+      id:
+        type: integer
+        nullable: false
+        options:
+          autoincrement: true
+    fields:
+      content_id:
+        type: integer
+        nullable: false
+      event_date_time:
+        type: integer
+        nullable: false
+      event_action:
+        type: string
+        nullable: false
+      remark:
+        type: string
+        nullable: true
+      evaluated:
+        type: boolean
+        nullable: true
+        options:
+          default: false

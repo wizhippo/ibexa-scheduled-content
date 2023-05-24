@@ -1,0 +1,29 @@
+{% trans_default_domain 'locationview' %}
+{% embed '@ibexadesign/ui/component/modal/modal.html.twig' with {
+    title: 'tab.wzh-schedule.add.title'|trans|desc('Create a new schedule'),
+    class: 'ibexa-schedulw',
+    id: modal_id|default('add-schedule-modal'),
+} %}
+    {% trans_default_domain 'locationview' %}
+    {% form_theme form '@ibexadesign/content/translation_add_form_fields.html.twig' %}
+
+    {% block content_before %}
+        {% set action = action is defined ? action : path('whz_ibexa_admin_location_schedules.add') %}
+        {{ form_start(form, {'action': action}) }}
+    {% endblock %}
+    {% block body_content %}
+        {{ form_row(form.content_info) }}
+        {{ form_row(form.event_date_time) }}
+        {{ form_row(form.event_action) }}
+        {{ form_row(form.remark) }}
+    {% endblock %}
+    {% block footer_content %}
+        {{ form_widget(form.add, {'attr': {'class': 'btn ibexa-btn ibexa-btn--primary ibexa-btn--add-schedule'}}) }}
+        <button type="button" class="btn ibexa-btn ibexa-btn--secondary" data-bs-dismiss="modal">
+            {{ 'tab.schedules.add.cancel'|trans|desc('Cancel') }}
+        </button>
+    {% endblock %}
+    {% block content_after %}
+        {{ form_end(form) }}
+    {% endblock %}
+{% endembed %}

@@ -1,0 +1,44 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  Wizhippo\ScheduledContentBundle\:
+    resource: '../../**'
+
+  wzh.ibexa.admin.controller.schedule:
+    class: Wizhippo\ScheduledContentBundle\Controller\ContentScheduleController
+    public: true
+
+  Wizhippo\ScheduledContentBundle\AdminUI\Tab\LocationView\ScheduleTab\ScheduleTab:
+    tags:
+      - { name: ibexa.admin_ui.tab, group: location-view }
+
+  Wizhippo\ScheduledContentBundle\Command\ScheduleContentCommand:
+    tags:
+      - { name: ibexa.cron.job, schedule: '*/5 * * * *' }
+
+  Wizhippo\ScheduledContentBundle\Installer\BuildSchemaListener:
+    arguments:
+      - '@=service("kernel").locateResource("@WizhippoScheduledContentBundle/Resources/schema/legacy.yaml")'
+
+  Wizhippo\ScheduledContentBundle\Core\Persistence\Legacy\Schedule\Gateway\DoctrineDatabase: ~
+
+  Wizhippo\ScheduledContentBundle\Core\Persistence\Legacy\Schedule\Gateway\ExceptionConversion:
+    arguments:
+      $innerGateway: '@Wizhippo\ScheduledContentBundle\Core\Persistence\Legacy\Schedule\Gateway\DoctrineDatabase'
+
+  Wizhippo\ScheduledContentBundle\Core\Persistence\Legacy\Schedule\Gateway:
+    alias: 'Wizhippo\ScheduledContentBundle\Core\Persistence\Legacy\Schedule\Gateway\ExceptionConversion'
+
+  Wizhippo\ScheduledContentBundle\Core\Persistence\Legacy\Schedule\Handler: ~
+
+  Wizhippo\ScheduledContentBundle\Core\Persistence\Cache\ContentScheduleHandler:
+    arguments:
+      $cache: '@ibexa.cache_pool'
+      $inMemory: '@ibexa.spi.persistence.cache.inmemory'
+      $contentScheduleHandler: '@Wizhippo\ScheduledContentBundle\Core\Persistence\Legacy\Schedule\Handler'
+
+  Wizhippo\ScheduledContentBundle\Core\Repository\ContentScheduleService:
+    arguments:
+      $contentScheduleHandler: '@Wizhippo\ScheduledContentBundle\Core\Persistence\Cache\ContentScheduleHandler'

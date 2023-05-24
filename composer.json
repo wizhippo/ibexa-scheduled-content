@@ -1,0 +1,59 @@
+{
+    "name": "wizhippo/ibexa-scheduled-content",
+    "description": "Ibexa DXP scheduled content extension",
+    "license": "GPL-2.0-only",
+    "type": "ibexa-bundle",
+    "homepage": "https://github.com/wizhippo/ibexa-scheduled-content",
+    "keywords": [
+        "ibexa"
+    ],
+    "authors": [
+        {
+            "name": "Wizhippo",
+            "homepage": "https://github.com/wizhippo"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Wizhippo\\ScheduledContentBundle\\": "src/bundle/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Wizhippo\\ScheduledContentBundle\\Tests\\": "tests/bundle/",
+            "Wizhippo\\Tests\\Integration\\Schedule\\": "tests/integration/"
+        }
+    },
+    "require": {
+        "php": "^8.1",
+        "ibexa/core": "^4.1",
+        "ibexa/admin-ui": "^4.1",
+        "ibexa/rest": "^4.1",
+        "ibexa/content-forms": "^4.1",
+        "ibexa/solr": "^4.1",
+        "lolautruche/ez-core-extra-bundle": "^4.0",
+        "symfony/translation-contracts": "^2.5 || ^3.0",
+        "pagerfanta/pagerfanta": "^2.7 || ^3.5",
+        "doctrine/collections": "^1.6 || ^2.0",
+        "twig/twig": "^3.3",
+        "http-interop/http-factory-guzzle": "^1.2"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^5.4",
+        "phpunit/phpunit": "^9.5",
+        "phpstan/phpstan": "^1.1",
+        "phpstan/phpstan-strict-rules": "^1.0",
+        "phpstan/phpstan-symfony": "^1.0",
+        "phpstan/phpstan-phpunit": "^1.0",
+        "symfony/proxy-manager-bridge": "^5.4"
+    },
+    "scripts": {
+        "fix-cs": "@php ./vendor/bin/php-cs-fixer fix -v --show-progress=estimating",
+        "extract-translations": "./bin/console translation:extract en --dir=./src/ --output-dir=./src/Resources/translations/"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
+}

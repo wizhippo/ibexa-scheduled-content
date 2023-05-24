@@ -1,0 +1,147 @@
+{% trans_default_domain 'locationview' %}
+{% import _self as tab %}
+{% form_theme form_content_schedule_add with ['@ibexadesign/ui/form/flat_widgets.html.twig', '@ibexadesign/ui/form_fields.html.twig'] %}
+{% form_theme form_content_schedule_delete with ['@ibexadesign/ui/form/flat_widgets.html.twig', '@ibexadesign/ui/form_fields.html.twig'] %}
+
+<section class="ibexa-content-schedules">
+    {% set body_rows = [] %}
+    {% if schedules is not empty %}
+        {% for schedule in schedules %}
+            {% set body_row_cols = [] %}
+
+            {% set col_raw %}
+                {{ form_widget(form_content_schedule_delete.schedules[schedule.id], {'attr': {'disabled': not can_add}}) }}
+            {% endset %}
+            {% set body_row_cols = body_row_cols|merge([{
+                has_checkbox: true,
+                content: col_raw,
+                raw: true,
+            }]) %}
+
+            {% set col_raw %}
+                {{ schedule.id }}
+            {% endset %}
+            {% set body_row_cols = body_row_cols|merge([{
+                content: col_raw,
+                raw: true,
+            }]) %}
+
+            {% set col_raw %}
+                {{ schedule.eventDateTime|ibexa_short_datetime }}
+            {% endset %}
+            {% set body_row_cols = body_row_cols|merge([{
+                content: col_raw,
+                raw: true,
+            }]) %}
+
+            {% set col_raw %}
+                {{ schedule.eventAction }}
+            {% endset %}
+            {% set body_row_cols = body_row_cols|merge([{
+                content: col_raw,
+                raw: true,
+            }]) %}
+
+            {% set col_raw %}
+                {{ schedule.remark }}
+            {% endset %}
+            {% set body_row_cols = body_row_cols|merge([{
+                content: col_raw,
+                raw: true,
+            }]) %}
+
+            {% set col_raw %}
+                {% if schedule.evaluated %}
+                    {{ 'tab.schedules.yes'|trans|desc('Yes')}}
+                {% else %}
+                    {{ 'tab.schedules.no'|trans|desc('No')}}
+                {% endif %}
+            {% endset %}
+            {% set body_row_cols = body_row_cols|merge([{
+                content: col_raw,
+                raw: true,
+            }]) %}
+
+            {% set body_rows = body_rows|merge([{ cols: body_row_cols }]) %}
+        {% endfor %}
+    {% endif %}
+
+    {% embed '@ibexadesign/ui/component/table/table.html.twig' with {
+        headline: 'tab.locations.content_schedules'|trans|desc('Content Schedules'),
+        head_cols: [
+            { has_checkbox: true },
+            { content: 'tab.schedules.id'|trans|desc('Id') },
+            { content: 'tab.schedules.event_date'|trans|desc('Event date') },
+            { content: 'tab.schedules.event_action'|trans|desc('Event action') },
+            { content: 'tab.schedules.remark'|trans|desc('Remark') },
+            { content: 'tab.schedules.evaluated'|trans|desc('Evaluated') },
+        ],
+        body_rows,
+        actions: tab.table_header_tools(form_content_schedule_add, form_content_schedule_delete, can_add),
+    } %}
+        {% block between_header_and_table %}
+            {{ form_start(form_content_schedule_delete, {
+                'action': path('whz_ibexa_admin_location_schedules.delete'),
+                'attr': { 'class': 'ibexa-toggle-btn-state', 'data-toggle-button-id': '#delete-schedules' }
+            }) }}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(form_content_schedule_delete) }}
+
+    {% if pager is defined and pager.haveToPaginate %}
+        <div class="row justify-content-center align-items-center mb-2 ibexa-pagination__spacing">
+                <span class="ibexa-pagination__text">
+                    {{ 'pagination.viewing'|trans({
+                        '%viewing%': pager.currentPageResults|length,
+                        '%total%': pager.nbResults}, 'pagination')|desc('Viewing %viewing% out of %total% items')|raw }}
+                </span>
+        </div>
+        <div class="row justify-content-center align-items-center ibexa-pagination__btn mb-5">
+            {{ pagerfanta(pager, 'ibexa', pager_options|merge({
+                'routeParams': {
+                    '_fragment': 'ibexa-tab-location-view-wzh_schedule'
+                }
+            })) }}
+        </div>
+    {% endif %}
+
+    {% include '@ibexadesign/content/modal/add_wzh-schedule.html.twig' with {'form': form_content_schedule_add} only %}
+</section>
+
+{% macro table_header_tools(form_add, form_remove, can_add) %}
+    <button
+            type="button"
+            class="btn ibexa-btn ibexa-btn--tertiary ibexa-btn--small ibexa-btn--prevented ibexa-btn--add-schedule"
+            data-bs-toggle="modal"
+            data-bs-target="#add-schedule-modal"
+    >
+        <svg class="ibexa-icon ibexa-icon--small ibexa-icon--create">
+            <use xlink:href="{{ ibexa_icon_path('create') }}"></use>
+        </svg>
+        <span class="ibexa-btn__label">
+                {{ 'tab.translations.action.add'|trans|desc('Add new') }}
+            </span>
+    </button>
+
+    {% set modal_data_target = 'delete-schedules-modal' %}
+    <button
+            id="delete-schedules"
+            type="button"
+            class="btn ibexa-btn ibexa-btn--ghost ibexa-btn--small"
+            disabled
+            data-bs-toggle="modal"
+            data-bs-target="#{{ modal_data_target }}"
+    >
+        <svg class="ibexa-icon ibexa-icon--small ibexa-icon--trash">
+            <use xlink:href="{{ ibexa_icon_path('trash') }}"></use>
+        </svg>
+        <span class="ibexa-btn__label">
+            {{ 'tab.schedules.action.delete'|trans|desc('Delete') }}
+        </span>
+    </button>
+    {% include '@ibexadesign/ui/modal/bulk_delete_confirmation.html.twig' with {
+        'id': modal_data_target,
+        'message': 'tab.schedules.modal.message'|trans|desc('Do you want to delete the Schedule?'),
+        'data_click': '#' ~ form_remove.remove.vars.id,
+    } %}
+{% endmacro %}
