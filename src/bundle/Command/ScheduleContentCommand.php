@@ -106,7 +106,7 @@ class ScheduleContentCommand extends Command
             )
             ->from('wzh_scheduled_content')
             ->where('event_date_time <= :now')
-            ->andWhere('evaluated is false')
+            ->andWhere('evaluated is NULL')
             ->orderBy('content_id')
             ->addOrderBy('event_date_time', 'DESC')
             ->setParameter('now', $now->getTimestamp())

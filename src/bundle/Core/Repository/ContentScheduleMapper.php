@@ -25,7 +25,9 @@ final class ContentScheduleMapper
                 'eventDateTime' => $this->getDateTime($spiSchedule->eventDateTime),
                 'eventAction' => $spiSchedule->eventAction,
                 'remark' => $spiSchedule->remark,
-                'evaluated' => $spiSchedule->evaluated,
+                'evaluatedDateTime' => $spiSchedule->evaluatedDateTime !== null ? $this->getDateTime(
+                    $spiSchedule->evaluatedDateTime
+                ) : null,
             ]);
         }
 

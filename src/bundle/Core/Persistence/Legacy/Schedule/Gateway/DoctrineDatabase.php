@@ -161,8 +161,8 @@ final class DoctrineDatabase extends Gateway
         $query
             ->update('wzh_scheduled_content')
             ->set(
-                'evaluated',
-                ':evaluated'
+                'evaluated_date_time',
+                ':evaluated_date_time'
             )
             ->where(
                 $query->expr()->eq(
@@ -171,7 +171,7 @@ final class DoctrineDatabase extends Gateway
                 )
             )
             ->setParameter('id', $scheduleId, Types::INTEGER)
-            ->setParameter('evaluated', true, Types::BOOLEAN)
+            ->setParameter('evaluated_date_time', (new \DateTimeImmutable())->getTimestamp(), Types::INTEGER)
         ;
 
         $query->execute();
@@ -190,7 +190,7 @@ final class DoctrineDatabase extends Gateway
             ->select('*')
             ->from('wzh_scheduled_content')
             ->where('event_date_time <= :now')
-            ->andWhere('evaluated is false')
+            ->andWhere('evaluated_date_time is null')
             ->orderBy('event_date_time', 'ASC')
             ->setParameter('now', $now->getTimestamp())
         ;

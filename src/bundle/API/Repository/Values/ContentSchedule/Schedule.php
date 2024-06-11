@@ -13,7 +13,7 @@ use Ibexa\Contracts\Core\Repository\Values\ValueObject;
  * @property-read DateTimeInterface $eventDateTime Event effect datetime
  * @property-read string $eventAction Name of the action to perform
  * @property-read string $remark Remark to describe why the schedule
- * @property-read bool $evaluated Indicates if it has been processed
+ * @property-read ?DateTimeInterface $evaluatedDateTime Indicates when processed
  */
 class Schedule extends ValueObject
 {
@@ -31,5 +31,5 @@ class Schedule extends ValueObject
 
     protected ?string $remark;
 
-    protected bool $evaluated;
+    protected ?DateTimeInterface $evaluatedDateTime;
 }

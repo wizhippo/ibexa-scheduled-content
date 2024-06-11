@@ -18,7 +18,7 @@ class Mapper
         $schedule->eventDateTime = (int)$row['event_date_time'];
         $schedule->eventAction = (string)$row['event_action'];
         $schedule->remark = $row['remark'];
-        $schedule->evaluated = (bool)$row['evaluated'];
+        $schedule->evaluatedDateTime = $row['evaluated_date_time'] !== null ? (int)$row['evaluated_date_time'] : null;
 
         return $schedule;
     }

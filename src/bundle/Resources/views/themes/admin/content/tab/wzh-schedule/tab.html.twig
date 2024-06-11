@@ -51,10 +51,8 @@
             }]) %}
 
             {% set col_raw %}
-                {% if schedule.evaluated %}
-                    {{ 'tab.schedules.yes'|trans|desc('Yes')}}
-                {% else %}
-                    {{ 'tab.schedules.no'|trans|desc('No')}}
+                {% if schedule.evaluatedDateTime %}
+                    {{ schedule.evaluatedDateTime|ibexa_short_datetime }}
                 {% endif %}
             {% endset %}
             {% set body_row_cols = body_row_cols|merge([{

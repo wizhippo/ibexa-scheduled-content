@@ -19,8 +19,6 @@ tables:
       remark:
         type: string
         nullable: true
-      evaluated:
-        type: boolean
+      evaluated_date_time:
+        type: integer
         nullable: true
-        options:
-          default: false

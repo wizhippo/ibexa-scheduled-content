@@ -18,5 +18,5 @@ final class Schedule extends ValueObject
 
     public ?string $remark;
 
-    public bool $evaluated;
+    public ?int $evaluatedDateTime;
 }

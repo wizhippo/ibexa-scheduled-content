@@ -126,7 +126,7 @@ final class ContentScheduleService implements ContentScheduleServiceInterface
         ;
         $updateStruct->eventAction = $scheduleUpdateStruct->eventAction ?? $schedule->eventAction;
         $updateStruct->remark = $scheduleUpdateStruct->remark ?? $schedule->remark;
-        $updateStruct->evaluated = $scheduleUpdateStruct->evaluated ?? $schedule->evaluated;
+        $updateStruct->evaluatedDateTime = $scheduleUpdateStruct->evaluatedDateTime ?? $schedule->evaluatedDateTime;
 
         $this->repository->beginTransaction();
 

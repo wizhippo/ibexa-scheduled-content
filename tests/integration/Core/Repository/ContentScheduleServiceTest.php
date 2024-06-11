@@ -59,7 +59,7 @@ class ContentScheduleServiceTest extends IbexaKernelTestCase
         $this->assertEquals($scheduleCreateStruct->eventAction, $schedule->eventAction);
         $this->assertEquals($scheduleCreateStruct->remark, $schedule->remark);
         $this->assertEquals($scheduleCreateStruct->eventDateTime, $schedule->eventDateTime);
-        $this->assertFalse($schedule->evaluated);
+        $this->assertNull($schedule->evaluatedDateTime);
 
         return $schedule;
     }
@@ -74,7 +74,7 @@ class ContentScheduleServiceTest extends IbexaKernelTestCase
         $this->assertEquals($loadedSchedule->id, $schedule->id);
         $this->assertEquals($loadedSchedule->eventAction, $schedule->eventAction);
         $this->assertEquals($loadedSchedule->remark, $schedule->remark);
-        $this->assertEquals($loadedSchedule->evaluated, $schedule->evaluated);
+        $this->assertEquals($loadedSchedule->evaluatedDateTime, $schedule->evaluatedDateTime);
         $this->assertEquals($loadedSchedule->eventDateTime, $schedule->eventDateTime);
 
         return $loadedSchedule;
@@ -127,12 +127,12 @@ class ContentScheduleServiceTest extends IbexaKernelTestCase
      */
     public function testEvaluateSchedule(Schedule $schedule)
     {
-        $this->assertFalse($schedule->evaluated);
+        $this->assertNull($schedule->evaluatedDateTime);
 
         $this->scheduleService->evaluateSchedule($schedule);
 
         $loadedSchedule = $this->scheduleService->loadSchedule($schedule->id);
-        $this->assertTrue($loadedSchedule->evaluated);
+        $this->assertNotNull($loadedSchedule->evaluatedDateTime);
     }
 
     /**
