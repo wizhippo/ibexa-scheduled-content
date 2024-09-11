@@ -6,10 +6,10 @@
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
     </header>
     <body>
-      <trans-unit id="e181f2d18122fff525276b0ddb3e394e4cde3f36" resname="content.publish_hidden.success">
-        <source>Content published.</source>
-        <target state="new">Content published.</target>
-        <note>key: content.publish_hidden.success</note>
+      <trans-unit id="a315080371c85b5a919840e45872690b52adbe15" resname="content_edit__sidebar_right__publish_hidden">
+        <source>Publish hidden</source>
+        <target>Publish hidden</target>
+        <note>key: content_edit__sidebar_right__publish_hidden</note>
       </trans-unit>
     </body>
   </file>

@@ -1,17 +1,17 @@
-whz_ibexa_admin_location_schedules.add:
+wzh_ibexa_admin_location_schedules.add:
   path: /wzh/ibexa/admin/location/schedules/add
-  methods: [ 'POST' ]
+  methods: ['POST']
   defaults:
     _controller: 'Wizhippo\ScheduledContentBundle\Controller\ContentScheduleController::add'
 
-whz_ibexa_admin_location_schedules.delete:
+wzh_ibexa_admin_location_schedules.delete:
   path: /wzh/ibexa/admin/location/schedules/delete
-  methods: [ 'POST' ]
+  methods: ['POST']
   defaults:
     _controller: 'Wizhippo\ScheduledContentBundle\Controller\ContentScheduleController::delete'
 
-whz_ibexa_admin_location_schedules.update:
+wzh_ibexa_admin_location_schedules.update:
   path: /wzh/ibexa/admin/location/schedules/update
-  methods: [ 'POST' ]
+  methods: ['POST']
   defaults:
     _controller: 'Wizhippo\ScheduledContentBundle\Controller\ContentScheduleController::update'

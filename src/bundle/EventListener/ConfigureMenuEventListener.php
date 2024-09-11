@@ -60,7 +60,7 @@ class ConfigureMenuEventListener implements EventSubscriberInterface, Translatio
     public static function getTranslationMessages(): array
     {
         return [
-            (new Message(self::ITEM__PUBLISH_HIDDEN, 'menu'))->setDesc('Publish hidden'),
+            (new Message(self::ITEM__PUBLISH_HIDDEN, 'ibexa_menu'))->setDesc('Publish hidden'),
         ];
     }
 }

@@ -1,0 +1,91 @@
+{% trans_default_domain 'ibexa_dashboard' %}
+
+{% import "@ibexadesign/ui/dashboard/macros.html.twig" as macros %}
+
+{% set body_rows = [] %}
+{% for row in data %}
+    {% set body_row_cols = [] %}
+
+    {% set col_raw %}
+        <svg class="ibexa-icon ibexa-icon--small-medium">
+            <use xlink:href="{{ ibexa_content_type_icon(row.contentInfo.contentType.identifier) }}"></use>
+        </svg>
+    {% endset %}
+    {% set body_row_cols = body_row_cols|merge([{
+        has_icon: true,
+        content: col_raw,
+        raw: true,
+    }]) %}
+
+    {% set col_raw %}
+        <a href="{{ url('ibexa.content.view', { 'contentId': row.schedule.contentId }) }}">
+            {{ row.contentInfo.name }}
+        </a>
+    {% endset %}
+    {% set body_row_cols = body_row_cols|merge([{
+        content: col_raw,
+        raw: true,
+    }]) %}
+
+    {% set body_row_cols = body_row_cols|merge([
+        { content: row.contentInfo.contentType.name },
+        { content:  row.schedule.id }
+    ]) %}
+
+    {% set col_raw %}
+        <span{% if row.pastDue %} class="alert alert-danger"{% endif %}>{{ row.schedule.eventDateTime|ibexa_short_datetime }}</span>
+    {% endset %}
+    {% set body_row_cols = body_row_cols|merge([{
+        content: col_raw,
+        raw: true,
+    }]) %}
+
+    {% set col_raw %}
+        {{ row.schedule.eventAction }}
+    {% endset %}
+    {% set body_row_cols = body_row_cols|merge([{
+        content: col_raw,
+        raw: true,
+    }]) %}
+
+    {% set col_raw %}
+        {{ row.schedule.remark }}
+    {% endset %}
+    {% set body_row_cols = body_row_cols|merge([{
+        content: col_raw,
+        raw: true,
+    }]) %}
+
+    {% set body_rows = body_rows|merge([{ cols: body_row_cols }]) %}
+{% endfor %}
+
+{% include '@ibexadesign/ui/component/table/table.html.twig' with {
+    head_cols: [
+        { has_icon: true },
+        { content: 'dashboard.table.name'|trans|desc('Name') },
+        { content: 'dashboard.table.content_type'|trans|desc('Content type') },
+        { content: 'dashboard.table.event_id'|trans|desc('Event Id') },
+        { content: 'dashboard.table.event_date'|trans|desc('Event date') },
+        { content: 'dashboard.table.event_action'|trans|desc('Event action') },
+        { content: 'dashboard.table.remark'|trans|desc('Remark') },
+    ],
+    body_rows,
+    empty_table_info_text: 'dashboard.tab.all_media.empty'|trans|desc('No content. Media you create will show up here'),
+} %}
+
+{% if pager is defined and pager.haveToPaginate %}
+    <div class="row justify-content-center align-items-center mb-2 ibexa-pagination__spacing">
+            <span class="ibexa-pagination__text">
+                {{ 'pagination.viewing'|trans({
+                    '%viewing%': pager.currentPageResults|length,
+                    '%total%': pager.nbResults}, 'pagination')|desc('Viewing %viewing% out of %total% items')|raw }}
+            </span>
+    </div>
+    <div class="row justify-content-center align-items-center ibexa-pagination__btn mb-5">
+        {{ pagerfanta(pager, 'ibexa', pager_options|merge({
+            'routeParams': {
+                '_fragment': 'ibexa-tab-dashboard-everyone-wzh-schedule'
+            }
+        })) }}
+    </div>
+{% endif %}

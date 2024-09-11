@@ -48,10 +48,10 @@ class ScheduleContentCommand extends Command
          */
         $this->repository->sudo(
             function (Repository $repository) use ($output, $isDryRun) {
-                $now = new \DateTime();
+                $now = new \DateTimeImmutable();
 
                 /** @var Schedule $schedule */
-                foreach ($this->contentScheduleService->loadSchedulesByNotEvaluated($now) as $schedule) {
+                foreach ($this->contentScheduleService->loadSchedulesByNeedEvaluation($now) as $schedule) {
                     $contentInfo = $repository->getContentService()->loadContentInfo($schedule->contentId);
                     if ($contentInfo->status !== ContentInfo::STATUS_PUBLISHED) {
                         $msg = "Content {$contentInfo->id} for schedule {$schedule->id} is not published taking no action";

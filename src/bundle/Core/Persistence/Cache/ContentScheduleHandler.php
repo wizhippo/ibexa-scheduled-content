@@ -47,6 +47,19 @@ class ContentScheduleHandler extends AbstractInMemoryHandler implements ContentS
         return $cacheValue;
     }
 
+    public function loadSchedules(
+        bool $includeEvaluated,
+        int $offset = 0,
+        int $limit = -1
+    ): array {
+        return $this->contentScheduleHandler->loadSchedules($includeEvaluated, $offset, $limit);
+    }
+
+    public function loadSchedulesCount(bool $includeEvaluated): int
+    {
+        return $this->contentScheduleHandler->loadSchedulesCount($includeEvaluated);
+    }
+
     public function loadSchedulesByContentId(int $contentId, int $offset = 0, int $limit = -1): array
     {
         return $this->contentScheduleHandler->loadSchedulesByContentId($contentId, $offset, $limit);
@@ -57,9 +70,14 @@ class ContentScheduleHandler extends AbstractInMemoryHandler implements ContentS
         return $this->contentScheduleHandler->loadSchedulesByContentIdCount($contentId);
     }
 
-    public function loadSchedulesByNotEvaluated(\DateTime $now): array
+    public function loadSchedulesByNeedEvaluation(\DateTimeImmutable $now, int $offset = 0, int $limit = -1): array
     {
-        return $this->contentScheduleHandler->loadSchedulesByNotEvaluated($now);
+        return $this->contentScheduleHandler->loadSchedulesByNeedEvaluation($now, $offset, $limit);
+    }
+
+    public function loadSchedulesByNeedEvaluationCount(\DateTimeImmutable $now): int
+    {
+        return $this->contentScheduleHandler->loadSchedulesByNeedEvaluationCount($now);
     }
 
     public function create(CreateStruct $createStruct): Schedule
@@ -81,9 +99,11 @@ class ContentScheduleHandler extends AbstractInMemoryHandler implements ContentS
         $this->cache->invalidateTags(['wzh-content-schedule-'.$scheduleId]);
     }
 
-    public function evaluate(int $scheduleId): void
+    public function evaluate(int $scheduleId): bool
     {
-        $this->contentScheduleHandler->evaluate($scheduleId);
+        $ret = $this->contentScheduleHandler->evaluate($scheduleId);
         $this->cache->invalidateTags(['wzh-content-schedule-'.$scheduleId]);
+
+        return $ret;
     }
 }

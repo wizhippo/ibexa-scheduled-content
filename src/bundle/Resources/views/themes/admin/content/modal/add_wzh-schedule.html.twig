@@ -8,7 +8,7 @@
     {% form_theme form '@ibexadesign/content/translation_add_form_fields.html.twig' %}
 
     {% block content_before %}
-        {% set action = action is defined ? action : path('whz_ibexa_admin_location_schedules.add') %}
+        {% set action = action is defined ? action : path('wzh_ibexa_admin_location_schedules.add') %}
         {{ form_start(form, {'action': action}) }}
     {% endblock %}
     {% block body_content %}

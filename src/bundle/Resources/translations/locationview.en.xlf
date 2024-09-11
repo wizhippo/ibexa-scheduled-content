@@ -8,57 +8,62 @@
     <body>
       <trans-unit id="6856a70cdf924288c60b544707180a2bead40267" resname="tab.locations.content_schedules">
         <source>Content Schedules</source>
-        <target state="new">Content Schedules</target>
+        <target>Content Schedules</target>
         <note>key: tab.locations.content_schedules</note>
       </trans-unit>
       <trans-unit id="aec2ad21454a682050004dac7b9438bae8ff3cf8" resname="tab.name.wzh-schedule">
-        <source>Schedule</source>
-        <target state="new">Schedule</target>
+        <source>Content Schedule</source>
+        <target>Content Schedule</target>
         <note>key: tab.name.wzh-schedule</note>
       </trans-unit>
       <trans-unit id="d5621aee5735272d3a03c13d27107adf6cfca72f" resname="tab.schedules.action.delete">
         <source>Delete</source>
-        <target state="new">Delete</target>
+        <target>Delete</target>
         <note>key: tab.schedules.action.delete</note>
       </trans-unit>
       <trans-unit id="dd03e835f7a416de2c62e6d91eb795134a99d71d" resname="tab.schedules.add.cancel">
         <source>Cancel</source>
-        <target state="new">Cancel</target>
+        <target>Cancel</target>
         <note>key: tab.schedules.add.cancel</note>
+      </trans-unit>
+      <trans-unit id="7e3e27295a8bc3a12ea8f9e1b563baf6059eeb85" resname="tab.schedules.evaluated">
+        <source>Evaluated</source>
+        <target>Evaluated</target>
+        <note>key: tab.schedules.evaluated</note>
       </trans-unit>
       <trans-unit id="f542c30fda234302ed38bac5e3cd26c121356bfc" resname="tab.schedules.event_action">
         <source>Event action</source>
-        <target state="new">Event action</target>
+        <target>Event action</target>
         <note>key: tab.schedules.event_action</note>
       </trans-unit>
       <trans-unit id="a701576598cfb8cddb854014e9ed9a0acd04d15f" resname="tab.schedules.event_date">
         <source>Event date</source>
-        <target state="new">Event date</target>
+        <target>Event date</target>
         <note>key: tab.schedules.event_date</note>
       </trans-unit>
       <trans-unit id="b799f5255a87c437508baed0907eb5564a169d1a" resname="tab.schedules.id">
         <source>Id</source>
-        <target state="new">Id</target>
+        <target>Id</target>
         <note>key: tab.schedules.id</note>
       </trans-unit>
       <trans-unit id="0f764a6780fe4082a50fb1f3a6b75a9dacd858b6" resname="tab.schedules.modal.message">
         <source>Do you want to delete the Schedule?</source>
-        <target state="new">Do you want to delete the Schedule?</target>
+        <target>Do you want to delete the Schedule?</target>
         <note>key: tab.schedules.modal.message</note>
       </trans-unit>
       <trans-unit id="de8c5b1eb512a2becf533bb94b1fc97c305e869e" resname="tab.schedules.remark">
         <source>Remark</source>
-        <target state="new">Remark</target>
+        <target>Remark</target>
         <note>key: tab.schedules.remark</note>
       </trans-unit>
       <trans-unit id="492cea0fd67c4af8e41d21710668239c9db66cfc" resname="tab.translations.action.add">
         <source>Add new</source>
-        <target state="new">Add new</target>
+        <target>Add new</target>
         <note>key: tab.translations.action.add</note>
       </trans-unit>
       <trans-unit id="45ee61185e4f5f747e92ca3f95be571c9060849d" resname="tab.wzh-schedule.add.title">
         <source>Create a new schedule</source>
-        <target state="new">Create a new schedule</target>
+        <target>Create a new schedule</target>
         <note>key: tab.wzh-schedule.add.title</note>
       </trans-unit>
     </body>

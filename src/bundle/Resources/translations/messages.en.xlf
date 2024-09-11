@@ -8,7 +8,7 @@
     <body>
       <trans-unit id="59353d82aaf6a9b0ae9e4b5b487d9c89b408d901" resname="publish.hidden">
         <source>Publish hidden</source>
-        <target state="new">Publish hidden</target>
+        <target>Publish hidden</target>
         <note>key: publish.hidden</note>
       </trans-unit>
     </body>

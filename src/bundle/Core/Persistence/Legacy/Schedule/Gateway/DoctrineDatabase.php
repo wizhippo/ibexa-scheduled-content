@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wizhippo\ScheduledContentBundle\Core\Persistence\Legacy\Schedule\Gateway;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Types\Types;
 use Ibexa\Core\Base\Exceptions\NotFoundException;
@@ -24,14 +25,10 @@ final class DoctrineDatabase extends Gateway
 
     public function getScheduleData(int $scheduleId): array
     {
-        $query = $this->connection->createQueryBuilder();
-        $query
-            ->select('*')
-            ->from('wzh_scheduled_content')
-            ->where(
-                $query->expr()->eq('id', ':id')
-            )->setParameter('id', $scheduleId, Types::INTEGER)
-        ;
+        $query = $this->createContentSchedulesQueryBuilder();
+        $query->where(
+            $query->expr()->eq('id', ':id')
+        )->setParameter('id', $scheduleId, Types::INTEGER);
 
         $row = $query->execute()->fetchAssociative();
 
@@ -42,13 +39,67 @@ final class DoctrineDatabase extends Gateway
         throw new NotFoundException('content schedule', $scheduleId);
     }
 
+    public function getSchedulesData(
+        bool $includeEvaluated,
+        int $offset = 0,
+        int $limit = -1
+    ): array {
+        $queryBuilder = $this->createContentSchedulesQueryBuilder()
+            ->setFirstResult($offset)
+            ->setMaxResults($limit > 0 ? $limit : PHP_INT_MAX)
+        ;
+
+        $criteria = [];
+
+        if (!$includeEvaluated) {
+            $criteria[] = $queryBuilder->expr()->isNull('evaluated_date_time');
+        }
+
+        if ($criteria) {
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->and(...$criteria)
+            );
+        }
+
+        $rows = $queryBuilder->execute()->fetchAllAssociative();
+
+        if (count($rows) === 0) {
+            return [];
+        }
+
+        return $rows;
+    }
+
+    public function getSchedulesDataCount(bool $includeEvaluated): int
+    {
+        $queryBuilder = $this->createContentSchedulesQueryBuilder()
+            ->select(
+                $this->connection->getDatabasePlatform()
+                    ->getCountExpression('DISTINCT wzh_scheduled_content.id').' AS count'
+            )
+        ;
+
+        $criteria = [];
+
+        if (!$includeEvaluated) {
+            $criteria[] = $queryBuilder->expr()->isNull('evaluated_date_time');
+        }
+
+        if ($criteria) {
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->and(...$criteria)
+            );
+        }
+
+        return (int)$queryBuilder->execute()->fetchOne();
+    }
+
     public function getSchedulesDataByContentId(
         int $contentId,
         int $offset = 0,
         int $limit = -1
     ): array {
-        $queryBuilder = $this->createContentScheduletByContentIdQueryBuilder($contentId)
-            ->orderBy('wzh_scheduled_content.event_date_time', 'ASC')
+        $queryBuilder = $this->createContentSchedulesByContentIdQueryBuilder($contentId)
             ->setFirstResult($offset)
             ->setMaxResults($limit > 0 ? $limit : PHP_INT_MAX)
         ;
@@ -62,10 +113,9 @@ final class DoctrineDatabase extends Gateway
         return $rows;
     }
 
-    public function getSchedulesDataByContentIdCount(
-        int $contentId
-    ): int {
-        $queryBuilder = $this->createContentScheduletByContentIdQueryBuilder($contentId)
+    public function getSchedulesDataByContentIdCount(int $contentId): int
+    {
+        $queryBuilder = $this->createContentSchedulesByContentIdQueryBuilder($contentId)
             ->select(
                 $this->connection->getDatabasePlatform()
                     ->getCountExpression('DISTINCT wzh_scheduled_content.id').' AS count'
@@ -155,7 +205,7 @@ final class DoctrineDatabase extends Gateway
         $query->execute();
     }
 
-    public function evaluate(int $scheduleId)
+    public function evaluate(int $scheduleId): bool
     {
         $query = $this->connection->createQueryBuilder();
         $query
@@ -174,41 +224,71 @@ final class DoctrineDatabase extends Gateway
             ->setParameter('evaluated_date_time', (new \DateTimeImmutable())->getTimestamp(), Types::INTEGER)
         ;
 
-        $query->execute();
+        return $query->execute() === 1;
     }
 
     /**
      * Returns a list of schedules to be evaluated in the order to be actioned
      *
-     * @param \DateTime $now
-     * @return \Traversable
+     * @throws Exception
      * @throws \Doctrine\DBAL\Exception
      */
-    public function getSchedulesDataByNotEvaluated(\DateTime $now): array
-    {
-        $query = $this->connection->createQueryBuilder()
-            ->select('*')
-            ->from('wzh_scheduled_content')
-            ->where('event_date_time <= :now')
-            ->andWhere('evaluated_date_time is null')
-            ->orderBy('event_date_time', 'ASC')
-            ->setParameter('now', $now->getTimestamp())
+    public function getSchedulesDataByNeedEvaluation(
+        \DateTimeImmutable $now,
+        int $offset = 0,
+        int $limit = -1
+    ): array {
+        $queryBuilder = $this->createContentSchedulesByNeedsEvaluationQueryBuilder($now)
+            ->setFirstResult($offset)
+            ->setMaxResults($limit > 0 ? $limit : PHP_INT_MAX)
         ;
 
-        return $query->execute()->fetchAllAssociative();
+        $rows = $queryBuilder->execute()->fetchAllAssociative();
+
+        if (count($rows) === 0) {
+            return [];
+        }
+
+        return $rows;
     }
 
-    private function createContentScheduletByContentIdQueryBuilder(int $contentId): QueryBuilder
+    public function getSchedulesDataByNeedEvaluationCount(\DateTimeImmutable $now): int
     {
-        $query = $this->connection->createQueryBuilder();
-        $query
+        $queryBuilder = $this->createContentSchedulesByNeedsEvaluationQueryBuilder($now)
+            ->select(
+                $this->connection->getDatabasePlatform()
+                    ->getCountExpression('DISTINCT wzh_scheduled_content.id').' AS count'
+            )
+        ;
+
+        return (int)$queryBuilder->execute()->fetchOne();
+    }
+
+
+    private function createContentSchedulesQueryBuilder(): QueryBuilder
+    {
+        return $this->connection->createQueryBuilder()
             ->select('*')
             ->from('wzh_scheduled_content')
-            ->where(
-                $query->expr()->eq(
-                    'content_id',
-                    ':content_id'
-                )
+            ->orderBy('event_date_time', 'ASC')
+        ;
+    }
+
+    private function createContentSchedulesByNeedsEvaluationQueryBuilder(\DateTimeImmutable $now): QueryBuilder
+    {
+        return $this->createContentSchedulesQueryBuilder()
+            ->andWhere('evaluated_date_time is null')
+            ->andWhere('event_date_time <= :now')
+            ->setParameter('now', $now->getTimestamp())
+        ;
+    }
+
+    private function createContentSchedulesByContentIdQueryBuilder(int $contentId): QueryBuilder
+    {
+        $query = $this->createContentSchedulesQueryBuilder();
+        $query
+            ->andWhere(
+                $query->expr()->eq('content_id', ':content_id')
             )->setParameter('content_id', $contentId, Types::INTEGER)
         ;
 

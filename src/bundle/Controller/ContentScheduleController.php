@@ -14,7 +14,7 @@ use Wizhippo\ScheduledContentBundle\AdminUI\Form\Data\Content\Location\ContentSc
 use Wizhippo\ScheduledContentBundle\AdminUI\Form\Data\Content\Location\ContentScheduleDeleteData;
 use Wizhippo\ScheduledContentBundle\AdminUI\Form\Data\Content\Location\ContentScheduleUpdateData;
 use Wizhippo\ScheduledContentBundle\AdminUI\Form\Factory\FormFactory;
-use Wizhippo\ScheduledContentBundle\AdminUI\Tab\LocationView\ScheduleTab\ScheduleTab;
+use Wizhippo\ScheduledContentBundle\AdminUI\Tab\LocationView\ContentScheduleTab;
 use Wizhippo\ScheduledContentBundle\API\Repository\ContentScheduleService;
 
 class ContentScheduleController extends Controller
@@ -22,9 +22,8 @@ class ContentScheduleController extends Controller
     public function __construct(
         private readonly TranslatableNotificationHandlerInterface $notificationHandler,
         private readonly FormFactory $formFactory,
-        private readonly ContentScheduleService $ContentScheduleService
+        private readonly ContentScheduleService $contentScheduleService
     ) {
-
     }
 
     public function add(Request $request): Response
@@ -40,26 +39,24 @@ class ContentScheduleController extends Controller
             /** @var ContentScheduleAddData $data */
             $data = $form->getData();
 
-            $newScheduleStrut = $this->ContentScheduleService->newScheduleCreateStruct();
+            $newScheduleCreateStruct = $this->contentScheduleService->newScheduleCreateStruct();
 
-            $newScheduleStrut->contentId = $data->getContentInfo()->id;
-            $newScheduleStrut->eventDateTime = $data->getEventDateTime();
-            $newScheduleStrut->eventAction = $data->getEventAction();
-            $newScheduleStrut->remark = $data->getRemark();
+            $newScheduleCreateStruct->contentId = $data->getContentInfo()->getId();
+            $newScheduleCreateStruct->eventDateTime = $data->getEventDateTime();
+            $newScheduleCreateStruct->eventAction = $data->getEventAction();
+            $newScheduleCreateStruct->remark = $data->getRemark();
 
-            $schedule = $this->ContentScheduleService->createSchedule($newScheduleStrut);
-
-            if ($schedule) {
+            try {
+                $schedule = $this->contentScheduleService->createSchedule($newScheduleCreateStruct);
                 $this->notificationHandler->success(
                 /** @Desc("Schedule '%id%' added.") */
                     'schedule.add.success',
                     ['%id%' => $schedule->id],
                     'schedule'
                 );
-            } else {
-                $this->notificationHandler->error(
-                /** @Desc("Schedule failed to add.") */
-                    'schedule.add.error',
+            } catch (\InvalidArgumentException $e) {
+                $this->notificationHandler->error(/** @Ignore */
+                    $e->getMessage(),
                     [],
                     'schedule'
                 );
@@ -69,7 +66,7 @@ class ContentScheduleController extends Controller
                 $this->generateUrl('ibexa.content.view', [
                     'contentId' => $contentInfo->id,
                     'locationId' => $contentInfo->mainLocationId,
-                    '_fragment' => ScheduleTab::URI_FRAGMENT,
+                    '_fragment' => ContentScheduleTab::URI_FRAGMENT,
                 ])
             );
         }
@@ -78,7 +75,7 @@ class ContentScheduleController extends Controller
             $this->generateUrl('ibexa.content.view', [
                 'contentId' => $contentInfo->id,
                 'locationId' => $contentInfo->mainLocationId,
-                '_fragment' => ScheduleTab::URI_FRAGMENT,
+                '_fragment' => ContentScheduleTab::URI_FRAGMENT,
             ])
         );
     }
@@ -97,22 +94,21 @@ class ContentScheduleController extends Controller
             $data = $form->getData();
             $contentInfo = $data->getContentInfo();
             foreach ($data->getSchedules() as $scheduleId => $selected) {
-                $schedule = $this->ContentScheduleService->loadSchedule($scheduleId);
-                $this->ContentScheduleService->deleteSchedule($schedule);
+                $schedule = $this->contentScheduleService->loadSchedule($scheduleId);
+                $this->contentScheduleService->deleteSchedule($schedule);
+                $this->notificationHandler->success(
+                /** @Desc("Schedule '%id%' removed.") */
+                    'schedule.delete.success',
+                    ['%id%' => $schedule->id],
+                    'schedule'
+                );
             }
-
-            $this->notificationHandler->success(
-            /** @Desc("Schedule '%id%' removed.") */
-                'schedule.delete.success',
-                ['%id%' => $scheduleId],
-                'schedule'
-            );
 
             return new RedirectResponse(
                 $this->generateUrl('ibexa.content.view', [
                     'contentId' => $contentInfo->id,
                     'locationId' => $contentInfo->mainLocationId,
-                    '_fragment' => ScheduleTab::URI_FRAGMENT,
+                    '_fragment' => ContentScheduleTab::URI_FRAGMENT,
                 ])
             );
         }
@@ -121,7 +117,7 @@ class ContentScheduleController extends Controller
             $this->generateUrl('ibexa.content.view', [
                 'contentId' => $contentInfo->id,
                 'locationId' => $contentInfo->mainLocationId,
-                '_fragment' => ScheduleTab::URI_FRAGMENT,
+                '_fragment' => ContentScheduleTab::URI_FRAGMENT,
             ])
         );
     }
@@ -139,25 +135,25 @@ class ContentScheduleController extends Controller
             /** @var ContentScheduleUpdateData $data */
             $data = $form->getData();
 
-            $newScheduleStrut = $this->ContentScheduleService->newScheduleUpdateStruct();
+            $schedule = $this->contentScheduleService->loadSchedule($data->getId());
 
-            $newScheduleStrut->eventDateTime = $data->getEventDateTime();
-            $newScheduleStrut->eventAction = $data->getEventAction();
-            $newScheduleStrut->remark = $data->getRemark();
+            $scheduleUpdateStruct = $this->contentScheduleService->newScheduleUpdateStruct();
 
-            $schedule = $this->ContentScheduleService->createSchedule($newScheduleStrut);
+            $scheduleUpdateStruct->eventDateTime = $data->getEventDateTime();
+            $scheduleUpdateStruct->eventAction = $data->getEventAction();
+            $scheduleUpdateStruct->remark = $data->getRemark();
 
-            if ($schedule) {
+            try {
+                $schedule = $this->contentScheduleService->updateSchedule($schedule, $scheduleUpdateStruct);
                 $this->notificationHandler->success(
                 /** @Desc("Schedule '%id%' added.") */
                     'schedule.add.success',
                     ['%id%' => $schedule->id],
                     'schedule'
                 );
-            } else {
-                $this->notificationHandler->error(
-                /** @Desc("Schedule failed to add.") */
-                    'schedule.add.error',
+            } catch (\InvalidArgumentException $e) {
+                $this->notificationHandler->error(/** @Ignore */
+                    $e->getMessage(),
                     [],
                     'schedule'
                 );
@@ -167,7 +163,7 @@ class ContentScheduleController extends Controller
                 $this->generateUrl('ibexa.content.view', [
                     'contentId' => $contentInfo->id,
                     'locationId' => $contentInfo->mainLocationId,
-                    '_fragment' => ScheduleTab::URI_FRAGMENT,
+                    '_fragment' => ContentScheduleTab::URI_FRAGMENT,
                 ])
             );
         }
@@ -176,7 +172,7 @@ class ContentScheduleController extends Controller
             $this->generateUrl('ibexa.content.view', [
                 'contentId' => $contentInfo->id,
                 'locationId' => $contentInfo->mainLocationId,
-                '_fragment' => ScheduleTab::URI_FRAGMENT,
+                '_fragment' => ContentScheduleTab::URI_FRAGMENT,
             ])
         );
     }

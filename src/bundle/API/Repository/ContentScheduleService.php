@@ -13,11 +13,25 @@ interface ContentScheduleService
 {
     public function loadSchedule(int $scheduleId): Schedule;
 
+    public function loadSchedules(
+        bool $includeEvaluated,
+        int $offset = 0,
+        int $limit = -1
+    ): ScheduleList;
+
+    public function loadSchedulesCount(bool $includeEvaluated): int;
+
     public function loadSchedulesByContentId(int $contentId, int $offset = 0, int $limit = -1): ScheduleList;
 
     public function loadSchedulesByContentIdCount(int $contentId): int;
 
-    public function loadSchedulesByNotEvaluated(\DateTime $now): ScheduleList;
+    public function loadSchedulesByNeedEvaluation(
+        \DateTimeImmutable $now,
+        int $offset = 0,
+        int $limit = -1
+    ): ScheduleList;
+
+    public function loadSchedulesByNeedEvaluationCount(\DateTimeImmutable $now): int;
 
     public function createSchedule(ScheduleCreateStruct $scheduleCreateStruct): Schedule;
 

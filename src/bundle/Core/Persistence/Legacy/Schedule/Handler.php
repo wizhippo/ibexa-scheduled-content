@@ -29,6 +29,21 @@ class Handler implements BaseContentScheduleHandler
         return $this->mapper->createScheduleFromRow($row);
     }
 
+    public function loadSchedules(
+        bool $includeEvaluated,
+        int $offset = 0,
+        int $limit = -1
+    ): array {
+        $schedules = $this->gateway->getSchedulesData($includeEvaluated, $offset, $limit);
+
+        return $this->mapper->extractScheduleListFromRows($schedules);
+    }
+
+    public function loadSchedulesCount(bool $includeEvaluated): int
+    {
+        return $this->gateway->getSchedulesDataCount($includeEvaluated);
+    }
+
     public function loadSchedulesByContentId(
         int $contentId,
         int $offset = 0,
@@ -47,11 +62,19 @@ class Handler implements BaseContentScheduleHandler
         return $this->gateway->getSchedulesDataByContentIdCount($contentId);
     }
 
-    public function loadSchedulesByNotEvaluated(\DateTime $now): array
-    {
-        $schedules = $this->gateway->getSchedulesDataByNotEvaluated($now);
+    public function loadSchedulesByNeedEvaluation(
+        \DateTimeImmutable $now,
+        int $offset = 0,
+        int $limit = -1
+    ): array {
+        $schedules = $this->gateway->getSchedulesDataByNeedEvaluation($now, $offset, $limit);
 
         return $this->mapper->extractScheduleListFromRows($schedules);
+    }
+
+    public function loadSchedulesByNeedEvaluationCount(\DateTimeImmutable $now): int
+    {
+        return $this->gateway->getSchedulesDataByNeedEvaluationCount($now);
     }
 
     public function create(CreateStruct $createStruct): Schedule
@@ -73,8 +96,8 @@ class Handler implements BaseContentScheduleHandler
         $this->gateway->deleteSchedule($scheduleId);
     }
 
-    public function evaluate(int $scheduleId): void
+    public function evaluate(int $scheduleId): bool
     {
-        $this->gateway->evaluate($scheduleId);
+        return $this->gateway->evaluate($scheduleId);
     }
 }

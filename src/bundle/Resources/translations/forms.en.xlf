@@ -8,27 +8,32 @@
     <body>
       <trans-unit id="34d8b60fe25332f7b98585e82e753eaf502c3e50" resname="Hide">
         <source>Hide</source>
-        <target state="new">Hide</target>
+        <target>Hide</target>
         <note>key: Hide</note>
       </trans-unit>
       <trans-unit id="d97d1ee339e4eeaba8cac91dca37c8b4ec8f5501" resname="Show">
         <source>Show</source>
-        <target state="new">Show</target>
+        <target>Show</target>
         <note>key: Show</note>
+      </trans-unit>
+      <trans-unit id="e3bf62bb7f5af7ba291b2df1a11d573bdb55d7e9" resname="Trash">
+        <source>Trash</source>
+        <target>Trash</target>
+        <note>key: Trash</note>
       </trans-unit>
       <trans-unit id="9e3c743fb052b12d69896a30ee9a6e1bb0c41427" resname="content_location_remove_form.remove">
         <source>Delete</source>
-        <target state="new">Delete</target>
+        <target>Delete</target>
         <note>key: content_location_remove_form.remove</note>
       </trans-unit>
       <trans-unit id="01adc416dac7e2f9a38316e265f62724e8a11974" resname="content_schedule_add_type.add">
         <source>Add schedule</source>
-        <target state="new">Add schedule</target>
+        <target>Add schedule</target>
         <note>key: content_schedule_add_type.add</note>
       </trans-unit>
       <trans-unit id="e76b053547add44cfd9e5f7d0f26bf7d2e2d1155" resname="content_schedule_update_type.update">
         <source>Update schedule</source>
-        <target state="new">Update schedule</target>
+        <target>Update schedule</target>
         <note>key: content_schedule_update_type.update</note>
       </trans-unit>
     </body>

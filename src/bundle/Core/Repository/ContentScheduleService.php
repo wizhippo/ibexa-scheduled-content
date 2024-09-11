@@ -16,6 +16,7 @@ use Wizhippo\ScheduledContentBundle\API\Repository\Values\ContentSchedule\Schedu
 use Wizhippo\ScheduledContentBundle\API\Repository\Values\ContentSchedule\ScheduleUpdateStruct;
 use Wizhippo\ScheduledContentBundle\SPI\Persistence\ContentSchedule\CreateStruct;
 use Wizhippo\ScheduledContentBundle\SPI\Persistence\ContentSchedule\Handler as ContentScheduleHandler;
+use Wizhippo\ScheduledContentBundle\SPI\Persistence\ContentSchedule\Schedule as SPISchedule;
 use Wizhippo\ScheduledContentBundle\SPI\Persistence\ContentSchedule\UpdateStruct;
 
 final class ContentScheduleService implements ContentScheduleServiceInterface
@@ -37,6 +38,34 @@ final class ContentScheduleService implements ContentScheduleServiceInterface
         $spiSchedule = $this->contentScheduleHandler->load($scheduleId);
 
         return $this->mapper->buildScheduleDomainObject($spiSchedule);
+    }
+
+    public function loadSchedules(
+        bool $includeEvaluated,
+        int $offset = 0,
+        int $limit = -1
+    ): ScheduleList {
+        if ($this->permissionResolver->hasAccess('wzh_schedule', 'read') === false) {
+            throw new UnauthorizedException('wzh_schedule', 'read');
+        }
+
+        $spiSchedules = $this->contentScheduleHandler->loadSchedules($includeEvaluated, $offset, $limit);
+
+        $schedules = [];
+        foreach ($spiSchedules as $spiSchedule) {
+            $schedules[] = $this->mapper->buildScheduleDomainObject($spiSchedule);
+        }
+
+        return new ScheduleList($schedules);
+    }
+
+    public function loadSchedulesCount(bool $includeEvaluated): int
+    {
+        if ($this->permissionResolver->hasAccess('wzh_schedule', 'read') === false) {
+            throw new UnauthorizedException('wzh_schedule', 'read');
+        }
+
+        return $this->contentScheduleHandler->loadSchedulesCount($includeEvaluated);
     }
 
     public function loadSchedulesByContentId(
@@ -67,13 +96,16 @@ final class ContentScheduleService implements ContentScheduleServiceInterface
         return $this->contentScheduleHandler->loadSchedulesByContentIdCount($contentId);
     }
 
-    public function loadSchedulesByNotEvaluated(\DateTime $now): ScheduleList
-    {
+    public function loadSchedulesByNeedEvaluation(
+        \DateTimeImmutable $now,
+        int $offset = 0,
+        int $limit = -1
+    ): ScheduleList {
         if ($this->permissionResolver->hasAccess('wzh_schedule', 'read') === false) {
             throw new UnauthorizedException('wzh_schedule', 'read');
         }
 
-        $spiSchedules = $this->contentScheduleHandler->loadSchedulesByNotEvaluated($now);
+        $spiSchedules = $this->contentScheduleHandler->loadSchedulesByNeedEvaluation($now, $offset, $limit);
 
         $schedules = [];
         foreach ($spiSchedules as $spiSchedule) {
@@ -81,6 +113,15 @@ final class ContentScheduleService implements ContentScheduleServiceInterface
         }
 
         return new ScheduleList($schedules);
+    }
+
+    public function loadSchedulesByNeedEvaluationCount(\DateTimeImmutable $now): int
+    {
+        if ($this->permissionResolver->hasAccess('wzh_schedule', 'read') === false) {
+            throw new UnauthorizedException('wzh_schedule', 'read');
+        }
+
+        return $this->contentScheduleHandler->loadSchedulesByNeedEvaluationCount($now);
     }
 
     public function createSchedule(ScheduleCreateStruct $scheduleCreateStruct): Schedule
@@ -92,6 +133,8 @@ final class ContentScheduleService implements ContentScheduleServiceInterface
         if (!$scheduleCreateStruct->contentId) {
             throw new InvalidArgumentValue('contentId', $scheduleCreateStruct->contentId, ScheduleCreateStruct::class);
         }
+
+        $this->validateConflictWithPrevious($scheduleCreateStruct);
 
         $createStruct = new CreateStruct();
         $createStruct->contentId = $scheduleCreateStruct->contentId;
@@ -119,6 +162,7 @@ final class ContentScheduleService implements ContentScheduleServiceInterface
             throw new UnauthorizedException('wzh_schedule', 'add');
         }
 
+        // TODO: check if conflict with previous and next schedules after update
         $updateStruct = new UpdateStruct();
         $updateStruct->eventDateTime =
             ($scheduleUpdateStruct->eventDateTime ?? $schedule->eventDateTime)
@@ -148,6 +192,7 @@ final class ContentScheduleService implements ContentScheduleServiceInterface
             throw new UnauthorizedException('wzh_schedule', 'delete');
         }
 
+        // TODO: check if conflict with previous and next schedules after deleting
         $this->repository->beginTransaction();
 
         try {
@@ -182,5 +227,41 @@ final class ContentScheduleService implements ContentScheduleServiceInterface
     public function newScheduleUpdateStruct(): ScheduleUpdateStruct
     {
         return new ScheduleUpdateStruct();
+    }
+
+    private function validateConflictWithPrevious(ScheduleCreateStruct $schedule): void
+    {
+        // We are assuming added schedule is after the last in list
+        $previousSchedules = $this->contentScheduleHandler->loadSchedulesByContentId(
+            $schedule->contentId
+        );
+        if (count($previousSchedules)) {
+            /** @var SPISchedule $previousSchedule */
+            $previousSchedule = end($previousSchedules);
+
+            if ($previousSchedule->eventDateTime >= $schedule->eventDateTime->getTimestamp()) {
+                throw new \InvalidArgumentException('Event date out of order');
+            }
+
+            if ($previousSchedule->eventAction === $schedule->eventAction) {
+                throw new \InvalidArgumentException('Previous schedule action is same as wanted action');
+            }
+            switch ($schedule->eventAction) {
+                case Schedule::ACTION_SHOW:
+                    if ($previousSchedule->eventAction !== Schedule::ACTION_HIDE) {
+                        throw new \InvalidArgumentException(
+                            'Previous schedule action conflicts with wanted action'
+                        );
+                    }
+                    break;
+                case Schedule::ACTION_HIDE:
+                    if ($previousSchedule->eventAction !== Schedule::ACTION_SHOW) {
+                        throw new \InvalidArgumentException(
+                            'Previous schedule action conflicts with wanted action'
+                        );
+                    }
+                    break;
+            }
+        }
     }
 }

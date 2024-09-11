@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Wizhippo\ScheduledContentBundle\AdminUI\Tab\LocationView\ScheduleTab;
+namespace Wizhippo\ScheduledContentBundle\AdminUI\Tab\LocationView;
 
 use Ibexa\Contracts\AdminUi\Tab\AbstractEventDispatchingTab;
 use Ibexa\Contracts\AdminUi\Tab\ConditionalTabInterface;
@@ -24,10 +24,10 @@ use Wizhippo\ScheduledContentBundle\AdminUI\Form\Data\Content\Location\ContentSc
 use Wizhippo\ScheduledContentBundle\AdminUI\Form\Factory\FormFactory;
 use Wizhippo\ScheduledContentBundle\API\Repository\ContentScheduleService;
 
-final class ScheduleTab extends AbstractEventDispatchingTab implements ConditionalTabInterface
+final class ContentScheduleTab extends AbstractEventDispatchingTab implements ConditionalTabInterface
 {
     public const URI_FRAGMENT = 'ibexa-tab-location-view-wzh-schedule';
-    private const PAGINATION_PARAM_NAME = 'wzh-schedule-tab-page';
+    public const PAGINATION_PARAM_NAME = 'wzh-schedule-tab-page';
 
     public function __construct(
         Environment $twig,
@@ -37,7 +37,7 @@ final class ScheduleTab extends AbstractEventDispatchingTab implements Condition
         private readonly ConfigResolverInterface $configResolver,
         private readonly RequestStack $requestStack,
         private readonly FormFactory $formFactory,
-        private readonly ContentScheduleService $ContentScheduleService
+        private readonly ContentScheduleService $contentScheduleService
     ) {
         parent::__construct($twig, $translator, $eventDispatcher);
     }
@@ -49,7 +49,7 @@ final class ScheduleTab extends AbstractEventDispatchingTab implements Condition
 
     public function getName(): string
     {
-        return /** @Desc("Schedule") */
+        return /** @Desc("Content Schedule") */
             $this->translator->trans('tab.name.wzh-schedule', [], 'locationview');
     }
 
@@ -82,8 +82,8 @@ final class ScheduleTab extends AbstractEventDispatchingTab implements Condition
             );
 
             $adapter = new CallbackAdapter(
-                fn () => $this->ContentScheduleService->loadSchedulesByContentIdCount($content->id),
-                fn ($offset, $length) => $this->ContentScheduleService->loadSchedulesByContentId(
+                fn () => $this->contentScheduleService->loadSchedulesByContentIdCount($content->id),
+                fn ($offset, $length) => $this->contentScheduleService->loadSchedulesByContentId(
                     $content->id,
                     $offset,
                     $length

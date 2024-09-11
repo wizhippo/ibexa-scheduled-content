@@ -43,7 +43,7 @@ class ContentScheduleServiceTest extends IbexaKernelTestCase
      */
     public function testCreateSchedule(Content $content)
     {
-        $tomorrow = new \DateTime('tomorrow');
+        $tomorrow = new \DateTimeImmutable('tomorrow');
 
         $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
 
@@ -85,7 +85,7 @@ class ContentScheduleServiceTest extends IbexaKernelTestCase
      */
     public function testUpdateSchedule(Schedule $schedule)
     {
-        $now = new \DateTime('today');
+        $now = new \DateTimeImmutable('today');
 
         $scheduleUpdateCreateStruct = $this->scheduleService->newScheduleUpdateStruct();
 
@@ -150,7 +150,7 @@ class ContentScheduleServiceTest extends IbexaKernelTestCase
     {
         $content = $this->createHiddenContent();
 
-        $tomorrow = new \DateTime('tomorrow');
+        $tomorrow = new \DateTimeImmutable('tomorrow');
 
         $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
 
@@ -173,9 +173,9 @@ class ContentScheduleServiceTest extends IbexaKernelTestCase
     {
         $content = $this->createHiddenContent();
 
-        $dateLessThen = new \DateTime('@1000');
-        $dateEquals = new \DateTime('@2000');
-        $dateGreaterThen = new \DateTime('@3000');
+        $dateLessThen = new \DateTimeImmutable('@1000');
+        $dateEquals = new \DateTimeImmutable('@2000');
+        $dateGreaterThen = new \DateTimeImmutable('@3000');
 
         $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
         $scheduleCreateStruct->contentId = $content->id;
@@ -185,17 +185,17 @@ class ContentScheduleServiceTest extends IbexaKernelTestCase
 
         $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
         $scheduleCreateStruct->contentId = $content->id;
-        $scheduleCreateStruct->eventAction = Schedule::ACTION_SHOW;
+        $scheduleCreateStruct->eventAction = Schedule::ACTION_HIDE;
         $scheduleCreateStruct->eventDateTime = $dateEquals;
         $this->scheduleService->createSchedule($scheduleCreateStruct);
 
         $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
         $scheduleCreateStruct->contentId = $content->id;
-        $scheduleCreateStruct->eventAction = Schedule::ACTION_SHOW;
+        $scheduleCreateStruct->eventAction = Schedule::ACTION_TRASH;
         $scheduleCreateStruct->eventDateTime = $dateGreaterThen;
         $this->scheduleService->createSchedule($scheduleCreateStruct);
 
-        $loadedSchedules = $this->scheduleService->loadSchedulesByNotEvaluated($dateEquals);
+        $loadedSchedules = $this->scheduleService->loadSchedulesByNeedEvaluation($dateEquals);
         $loadedSchedulesArray = $loadedSchedules->getSchedules();
 
         $this->assertCount(2, $loadedSchedulesArray);
@@ -203,12 +203,129 @@ class ContentScheduleServiceTest extends IbexaKernelTestCase
         $this->assertEquals($dateEquals, $loadedSchedulesArray[1]->eventDateTime);
     }
 
+    public function testCreateScheduleShowConflicts()
+    {
+        $content = $this->createHiddenContent();
+
+        // add extra to make sure we pull last element in order
+        $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
+        $scheduleCreateStruct->contentId = $content->id;
+        $scheduleCreateStruct->eventAction = Schedule::ACTION_HIDE;
+        $scheduleCreateStruct->eventDateTime = new \DateTimeImmutable('@1000');
+        $this->scheduleService->createSchedule($scheduleCreateStruct);
+
+        $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
+        $scheduleCreateStruct->contentId = $content->id;
+        $scheduleCreateStruct->eventAction = Schedule::ACTION_SHOW;
+        $scheduleCreateStruct->eventDateTime = new \DateTimeImmutable('@2000');
+        $this->scheduleService->createSchedule($scheduleCreateStruct);
+
+        // show -> show BAD
+        $this->expectException(\InvalidArgumentException::class);
+        $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
+        $scheduleCreateStruct->contentId = $content->id;
+        $scheduleCreateStruct->eventAction = Schedule::ACTION_SHOW;
+        $scheduleCreateStruct->eventDateTime = new \DateTimeImmutable('@3000');
+        $this->scheduleService->createSchedule($scheduleCreateStruct);
+
+        // show -> hide GOOD
+        $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
+        $scheduleCreateStruct->contentId = $content->id;
+        $scheduleCreateStruct->eventAction = Schedule::ACTION_HIDE;
+        $scheduleCreateStruct->eventDateTime = new \DateTimeImmutable('@4000');
+        $this->scheduleService->createSchedule($scheduleCreateStruct);
+
+        // show -> trash GOOD
+        $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
+        $scheduleCreateStruct->contentId = $content->id;
+        $scheduleCreateStruct->eventAction = Schedule::ACTION_TRASH;
+        $scheduleCreateStruct->eventDateTime = new \DateTimeImmutable('@5000');
+        $this->scheduleService->createSchedule($scheduleCreateStruct);
+
+        // trash -> show BAD
+        $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
+        $scheduleCreateStruct->contentId = $content->id;
+        $scheduleCreateStruct->eventAction = Schedule::ACTION_SHOW;
+        $scheduleCreateStruct->eventDateTime = new \DateTimeImmutable('@6000');
+        $this->scheduleService->createSchedule($scheduleCreateStruct);
+    }
+
+    public function testCreateScheduleHideConflicts()
+    {
+        $content = $this->createHiddenContent();
+        // add extra to make sure we pull last element in order
+        $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
+        $scheduleCreateStruct->contentId = $content->id;
+        $scheduleCreateStruct->eventAction = Schedule::ACTION_SHOW;
+        $scheduleCreateStruct->eventDateTime = new \DateTimeImmutable('@1000');
+        $this->scheduleService->createSchedule($scheduleCreateStruct);
+
+        $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
+        $scheduleCreateStruct->contentId = $content->id;
+        $scheduleCreateStruct->eventAction = Schedule::ACTION_HIDE;
+        $scheduleCreateStruct->eventDateTime = new \DateTimeImmutable('@2000');
+        $this->scheduleService->createSchedule($scheduleCreateStruct);
+
+        // hide -> hide BAD
+        $this->expectException(\InvalidArgumentException::class);
+        $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
+        $scheduleCreateStruct->contentId = $content->id;
+        $scheduleCreateStruct->eventAction = Schedule::ACTION_HIDE;
+        $scheduleCreateStruct->eventDateTime = new \DateTimeImmutable('@2000');
+        $this->scheduleService->createSchedule($scheduleCreateStruct);
+
+        // hide -> show GOOD
+        $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
+        $scheduleCreateStruct->contentId = $content->id;
+        $scheduleCreateStruct->eventAction = Schedule::ACTION_SHOW;
+        $scheduleCreateStruct->eventDateTime = new \DateTimeImmutable('@4000');
+        $this->scheduleService->createSchedule($scheduleCreateStruct);
+
+        // hide -> trash GOOD
+        $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
+        $scheduleCreateStruct->contentId = $content->id;
+        $scheduleCreateStruct->eventAction = Schedule::ACTION_TRASH;
+        $scheduleCreateStruct->eventDateTime = new \DateTimeImmutable('@5000');
+        $this->scheduleService->createSchedule($scheduleCreateStruct);
+
+        // trash -> hide BAD
+        $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
+        $scheduleCreateStruct->contentId = $content->id;
+        $scheduleCreateStruct->eventAction = Schedule::ACTION_HIDE;
+        $scheduleCreateStruct->eventDateTime = new \DateTimeImmutable('@6000');
+        $this->scheduleService->createSchedule($scheduleCreateStruct);
+    }
+
+    public function testCreateScheduleOutOfOrder()
+    {
+        $content = $this->createHiddenContent();
+        $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
+        $scheduleCreateStruct->contentId = $content->id;
+        $scheduleCreateStruct->eventAction = Schedule::ACTION_SHOW;
+        $scheduleCreateStruct->eventDateTime = new \DateTimeImmutable('@1000');
+        $this->scheduleService->createSchedule($scheduleCreateStruct);
+
+        $content = $this->createHiddenContent();
+        $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
+        $scheduleCreateStruct->contentId = $content->id;
+        $scheduleCreateStruct->eventAction = Schedule::ACTION_HIDE;
+        $scheduleCreateStruct->eventDateTime = new \DateTimeImmutable('@2000');
+        $this->scheduleService->createSchedule($scheduleCreateStruct);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
+        $scheduleCreateStruct->contentId = $content->id;
+        $scheduleCreateStruct->eventAction = Schedule::ACTION_SHOW;
+        $scheduleCreateStruct->eventDateTime = new \DateTimeImmutable('@2000');
+        $this->scheduleService->createSchedule($scheduleCreateStruct);
+    }
+
     public function testCreateScheduleAsAnonymousUserShouldFail()
     {
         $content = $this->createHiddenContent();
         self::setAnonymousUser();
 
-        $tomorrow = new \DateTime('tomorrow');
+        $tomorrow = new \DateTimeImmutable('tomorrow');
 
         $scheduleCreateStruct = $this->scheduleService->newScheduleCreateStruct();
 

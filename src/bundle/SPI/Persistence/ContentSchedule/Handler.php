@@ -8,6 +8,14 @@ interface Handler
 {
     public function load(int $scheduleId): Schedule;
 
+    public function loadSchedules(
+        bool $includeEvaluated,
+        int $offset = 0,
+        int $limit = -1
+    ): array;
+
+    public function loadSchedulesCount(bool $includeEvaluated): int;
+
     /**
      * @return Schedule[]
      */
@@ -15,7 +23,9 @@ interface Handler
 
     public function loadSchedulesByContentIdCount(int $contentId): int;
 
-    public function loadSchedulesByNotEvaluated(\DateTime $now): array;
+    public function loadSchedulesByNeedEvaluation(\DateTimeImmutable $now, int $offset = 0, int $limit = -1): array;
+
+    public function loadSchedulesByNeedEvaluationCount(\DateTimeImmutable $now): int;
 
     public function create(CreateStruct $createStruct): Schedule;
 
@@ -23,5 +33,5 @@ interface Handler
 
     public function deleteSchedule(int $scheduleId): void;
 
-    public function evaluate(int $scheduleId): void;
+    public function evaluate(int $scheduleId): bool;
 }

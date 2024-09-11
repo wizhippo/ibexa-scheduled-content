@@ -10,13 +10,17 @@ services:
     class: Wizhippo\ScheduledContentBundle\Controller\ContentScheduleController
     public: true
 
-  Wizhippo\ScheduledContentBundle\AdminUI\Tab\LocationView\ScheduleTab\ScheduleTab:
+  Wizhippo\ScheduledContentBundle\AdminUI\Tab\Dashboard\EveryoneContentScheduleTab:
     tags:
-      - { name: ibexa.admin_ui.tab, group: location-view }
+      - {name: ibexa.admin_ui.tab, group: dashboard-everyone}
+
+  Wizhippo\ScheduledContentBundle\AdminUI\Tab\LocationView\ContentScheduleTab:
+    tags:
+      - {name: ibexa.admin_ui.tab, group: location-view}
 
   Wizhippo\ScheduledContentBundle\Command\ScheduleContentCommand:
     tags:
-      - { name: ibexa.cron.job, schedule: '*/5 * * * *' }
+      - {name: ibexa.cron.job, schedule: '*/5 * * * *'}
 
   Wizhippo\ScheduledContentBundle\Installer\BuildSchemaListener:
     arguments:

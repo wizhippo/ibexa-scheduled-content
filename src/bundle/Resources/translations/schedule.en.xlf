@@ -8,17 +8,17 @@
     <body>
       <trans-unit id="c7a233c2cd8c5af836a0d0d1acd99bfd28ad13bc" resname="schedule.add.error">
         <source>Schedule failed to add.</source>
-        <target state="new">Schedule failed to add.</target>
+        <target>Schedule failed to add.</target>
         <note>key: schedule.add.error</note>
       </trans-unit>
       <trans-unit id="f2b5e92d609816df0d2b426e0bdf9168214cd315" resname="schedule.add.success">
         <source>Schedule '%id%' added.</source>
-        <target state="new">Schedule '%id%' added.</target>
+        <target>Schedule '%id%' added.</target>
         <note>key: schedule.add.success</note>
       </trans-unit>
       <trans-unit id="65657178b7a9b2b53fbb449aa5075ea02899cd12" resname="schedule.delete.success">
         <source>Schedule '%id%' removed.</source>
-        <target state="new">Schedule '%id%' removed.</target>
+        <target>Schedule '%id%' removed.</target>
         <note>key: schedule.delete.success</note>
       </trans-unit>
     </body>

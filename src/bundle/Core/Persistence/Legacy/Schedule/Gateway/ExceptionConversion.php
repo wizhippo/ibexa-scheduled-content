@@ -27,6 +27,27 @@ final class ExceptionConversion extends Gateway
         }
     }
 
+    public function getSchedulesData(
+        bool $includeEvaluated,
+        int $offset = 0,
+        int $limit = -1
+    ): array {
+        try {
+            return $this->innerGateway->getSchedulesData($includeEvaluated, $offset, $limit);
+        } catch (DBALException|PDOException $e) {
+            throw DatabaseException::wrap($e);
+        }
+    }
+
+    public function getSchedulesDataCount(bool $includeEvaluated): int
+    {
+        try {
+            return $this->innerGateway->getSchedulesDataCount($includeEvaluated);
+        } catch (DBALException|PDOException $e) {
+            throw DatabaseException::wrap($e);
+        }
+    }
+
     public function getSchedulesDataByContentId(
         int $contentId,
         int $offset = 0,
@@ -76,19 +97,31 @@ final class ExceptionConversion extends Gateway
         }
     }
 
-    public function evaluate(int $scheduleId)
+    public function evaluate(int $scheduleId): bool
     {
         try {
-            $this->innerGateway->evaluate($scheduleId);
+            return $this->innerGateway->evaluate($scheduleId);
         } catch (DBALException|PDOException $e) {
             throw DatabaseException::wrap($e);
         }
     }
 
-    public function getSchedulesDataByNotEvaluated(\DateTime $now): array
+    public function getSchedulesDataByNeedEvaluation(
+        \DateTimeImmutable $now,
+        int $offset = 0,
+        int $limit = -1
+    ): array {
+        try {
+            return $this->innerGateway->getSchedulesDataByNeedEvaluation($now, $offset, $limit);
+        } catch (DBALException|PDOException $e) {
+            throw DatabaseException::wrap($e);
+        }
+    }
+
+    public function getSchedulesDataByNeedEvaluationCount(\DateTimeImmutable $now): int
     {
         try {
-            return $this->innerGateway->getSchedulesDataByNotEvaluated($now);
+            return $this->innerGateway->getSchedulesDataByNeedEvaluationCount($now);
         } catch (DBALException|PDOException $e) {
             throw DatabaseException::wrap($e);
         }

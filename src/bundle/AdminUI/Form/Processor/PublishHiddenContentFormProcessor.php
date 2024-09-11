@@ -10,7 +10,7 @@ use Ibexa\Contracts\Core\Repository\ContentService;
 use Ibexa\Contracts\Core\Repository\Values\Content\Content;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Wizhippo\ScheduledContentBundle\AdminUI\Tab\LocationView\ScheduleTab\ScheduleTab;
+use Wizhippo\ScheduledContentBundle\AdminUI\Tab\LocationView\ContentScheduleTab;
 
 class PublishHiddenContentFormProcessor implements EventSubscriberInterface
 {
@@ -38,7 +38,7 @@ class PublishHiddenContentFormProcessor implements EventSubscriberInterface
 
         $response = $event->getResponse();
         if ($response instanceof RedirectResponse) {
-            $response->setTargetUrl($response->getTargetUrl().'#'.ScheduleTab::URI_FRAGMENT.'#tab');
+            $response->setTargetUrl($response->getTargetUrl().'#'.ContentScheduleTab::URI_FRAGMENT.'#tab');
         }
     }
 }
