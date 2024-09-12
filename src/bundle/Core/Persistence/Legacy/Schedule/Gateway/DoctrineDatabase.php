@@ -73,6 +73,7 @@ final class DoctrineDatabase extends Gateway
     public function getSchedulesDataCount(bool $includeEvaluated): int
     {
         $queryBuilder = $this->createContentSchedulesQueryBuilder()
+            ->resetQueryPart('orderBy')
             ->select(
                 $this->connection->getDatabasePlatform()
                     ->getCountExpression('DISTINCT wzh_scheduled_content.id').' AS count'
@@ -116,6 +117,7 @@ final class DoctrineDatabase extends Gateway
     public function getSchedulesDataByContentIdCount(int $contentId): int
     {
         $queryBuilder = $this->createContentSchedulesByContentIdQueryBuilder($contentId)
+            ->resetQueryPart('orderBy')
             ->select(
                 $this->connection->getDatabasePlatform()
                     ->getCountExpression('DISTINCT wzh_scheduled_content.id').' AS count'
@@ -255,6 +257,7 @@ final class DoctrineDatabase extends Gateway
     public function getSchedulesDataByNeedEvaluationCount(\DateTimeImmutable $now): int
     {
         $queryBuilder = $this->createContentSchedulesByNeedsEvaluationQueryBuilder($now)
+            ->resetQueryPart('orderBy')
             ->select(
                 $this->connection->getDatabasePlatform()
                     ->getCountExpression('DISTINCT wzh_scheduled_content.id').' AS count'
