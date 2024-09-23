@@ -6,11 +6,6 @@
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
     </header>
     <body>
-      <trans-unit id="c7a233c2cd8c5af836a0d0d1acd99bfd28ad13bc" resname="schedule.add.error">
-        <source>Schedule failed to add.</source>
-        <target>Schedule failed to add.</target>
-        <note>key: schedule.add.error</note>
-      </trans-unit>
       <trans-unit id="f2b5e92d609816df0d2b426e0bdf9168214cd315" resname="schedule.add.success">
         <source>Schedule '%id%' added.</source>
         <target>Schedule '%id%' added.</target>
