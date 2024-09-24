@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Wizhippo\ScheduledContentBundle\API\Repository\Values\ContentSchedule;
 
-use DateTimeInterface;
+use DateTimeImmutable;
 use Ibexa\Contracts\Core\Repository\Values\ValueObject;
 
 abstract class ScheduleStruct extends ValueObject
 {
-    public DateTimeInterface $eventDateTime;
+    public DateTimeImmutable $eventDateTime;
 
     public string $eventAction;
 

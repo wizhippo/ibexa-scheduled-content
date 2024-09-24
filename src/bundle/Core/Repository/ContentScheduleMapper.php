@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wizhippo\ScheduledContentBundle\Core\Repository;
 
 use DateTime;
+use DateTimeImmutable;
 use Wizhippo\ScheduledContentBundle\API\Repository\Values\ContentSchedule\Schedule;
 use Wizhippo\ScheduledContentBundle\SPI\Persistence\ContentSchedule\Schedule as SPISchedule;
 
@@ -35,16 +36,16 @@ final class ContentScheduleMapper
     }
 
     /**
-     * Returns \DateTime object from given $timestamp in environment timezone.
+     * Returns \DateTimeImmutable object from given $timestamp in environment timezone.
      *
-     * This method is needed because constructing \DateTime with $timestamp will
+     * This method is needed because constructing \DateTimeImmutable with $timestamp will
      * return the object in UTC timezone.
      */
-    public function getDateTime($timestamp): DateTime
+    public function getDateTime($timestamp): DateTimeImmutable
     {
         $dateTime = new DateTime('now');
         $dateTime->setTimestamp((int)$timestamp);
 
-        return $dateTime;
+        return DateTimeImmutable::createFromMutable($dateTime);
     }
 }

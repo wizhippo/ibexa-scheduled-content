@@ -42,7 +42,7 @@ class ContentScheduleController extends Controller
             $newScheduleCreateStruct = $this->contentScheduleService->newScheduleCreateStruct();
 
             $newScheduleCreateStruct->contentId = $data->getContentInfo()->getId();
-            $newScheduleCreateStruct->eventDateTime = $data->getEventDateTime();
+            $newScheduleCreateStruct->eventDateTime = \DateTimeImmutable::createFromMutable($data->getEventDateTime());
             $newScheduleCreateStruct->eventAction = $data->getEventAction();
             $newScheduleCreateStruct->remark = $data->getRemark();
 
@@ -55,7 +55,8 @@ class ContentScheduleController extends Controller
                     'schedule'
                 );
             } catch (\InvalidArgumentException $e) {
-                $this->notificationHandler->error(/** @Ignore */
+                $this->notificationHandler->error(
+                /** @Ignore */
                     $e->getMessage(),
                     [],
                     'schedule'
@@ -95,13 +96,21 @@ class ContentScheduleController extends Controller
             $contentInfo = $data->getContentInfo();
             foreach ($data->getSchedules() as $scheduleId => $selected) {
                 $schedule = $this->contentScheduleService->loadSchedule($scheduleId);
-                $this->contentScheduleService->deleteSchedule($schedule);
-                $this->notificationHandler->success(
-                /** @Desc("Schedule '%id%' removed.") */
-                    'schedule.delete.success',
-                    ['%id%' => $schedule->id],
-                    'schedule'
-                );
+                try {
+                    $this->contentScheduleService->deleteSchedule($schedule);
+                    $this->notificationHandler->success(
+                    /** @Desc("Schedule '%id%' removed.") */
+                        'schedule.delete.success',
+                        ['%id%' => $schedule->id],
+                        'schedule'
+                    );
+                } catch (\InvalidArgumentException $e) {
+                    $this->notificationHandler->error(
+                    /** @Ignore */ $e->getMessage(),
+                        [],
+                        'schedule'
+                    );
+                }
             }
 
             return new RedirectResponse(
@@ -152,7 +161,8 @@ class ContentScheduleController extends Controller
                     'schedule'
                 );
             } catch (\InvalidArgumentException $e) {
-                $this->notificationHandler->error(/** @Ignore */
+                $this->notificationHandler->error(
+                /** @Ignore */
                     $e->getMessage(),
                     [],
                     'schedule'

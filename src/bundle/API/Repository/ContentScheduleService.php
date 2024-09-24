@@ -39,7 +39,9 @@ interface ContentScheduleService
 
     public function deleteSchedule(Schedule $schedule): void;
 
-    public function evaluateSchedule(Schedule $schedule): void;
+    public function evaluateSchedule(Schedule $schedule, bool $isDryRun): void;
+
+    public function evaluateSchedulesByNeedEvaluation(\DateTimeImmutable $now, bool $isDryRun): void;
 
     public function newScheduleCreateStruct(): ScheduleCreateStruct;
 

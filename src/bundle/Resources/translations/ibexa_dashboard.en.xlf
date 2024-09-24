@@ -8,7 +8,7 @@
     <body>
       <trans-unit id="13770fac5eac60ee20bcbb685a7a43fee2c74a13" resname="dashboard.tab.all_schedules.empty">
         <source>No content. Schedules you create will show up here</source>
-        <target state="new">No content. Schedules you create will show up here</target>
+        <target>No content. Schedules you create will show up here</target>
         <note>key: dashboard.tab.all_schedules.empty</note>
       </trans-unit>
       <trans-unit id="e17a8999c9e44b7e8ea1ba0f5cff596ece264da5" resname="dashboard.table.content_type">
