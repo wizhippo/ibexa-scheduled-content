@@ -1,0 +1,34 @@
+{% extends "@ibexadesign/ui/layout.html.twig" %}
+
+{% from '@ibexadesign/ui/component/macros.html.twig' import results_headline %}
+
+{% trans_default_domain 'ibexa_drafts' %}
+
+{% form_theme form_hide_later '@ibexadesign/ui/form_fields.html.twig' %}
+
+{% import _self as macros %}
+
+{% block title %}{{ 'hide.later'|trans|desc('Hide later') }} - {{ parent() }}{% endblock %}
+
+{% block body_class %}ibexa-drafts-list-view{% endblock %}
+
+{% block header %}
+    {% include '@ibexadesign/ui/page_title.html.twig' with {
+        title: 'hide.later'|trans|desc('Hide later'),
+    } %}
+{% endblock %}
+
+{% block content %}
+    <div class="align-items-stretch ibexa-main-row">
+        <section class="container ibexa-container">
+            {{ form_start(form_hide_later, {
+                'action': path('wzh_ibexa_admin_location_schedules.publishLater', {
+                    'contentId': content.id,
+                    'versionNo': content.versionInfo.versionNo,
+                    'languageCode': languageCode
+                }),
+            }) }}
+            {{ form_end(form_hide_later) }}
+        </section>
+    </div>
+{% endblock %}

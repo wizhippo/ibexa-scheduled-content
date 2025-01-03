@@ -10,6 +10,9 @@ tables:
       content_id:
         type: integer
         nullable: false
+      version_no:
+        type: integer
+        nullable: true
       event_date_time:
         type: integer
         nullable: false
@@ -18,7 +21,4 @@ tables:
         nullable: false
       remark:
         type: string
-        nullable: true
-      evaluated_date_time:
-        type: integer
         nullable: true

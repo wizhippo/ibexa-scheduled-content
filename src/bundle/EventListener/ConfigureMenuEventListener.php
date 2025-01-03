@@ -15,7 +15,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class ConfigureMenuEventListener implements EventSubscriberInterface, TranslationContainerInterface
 {
     /* Menu items */
-    const ITEM__PUBLISH_HIDDEN = 'content_edit__sidebar_right__publish_hidden';
+    const ITEM__PUBLISH_LATER = 'content_edit__sidebar_right__publish_later';
+    const ITEM__HIDE_LATER = 'content_edit__sidebar_right__hide_later';
 
     public function __construct(
         private readonly MenuItemFactory $factory
@@ -37,30 +38,44 @@ class ConfigureMenuEventListener implements EventSubscriberInterface, Translatio
         $publishMenu = $menu->getChild(ContentEditRightSidebarBuilder::ITEM__PUBLISH);
         if ($publishMenu) {
             $canPublish = $publishMenu->getAttribute('disabled') !== 'disabled';
-            $publishHiddenAttributes = [
+            $publishLaterAttributes = [
                 'class' => ContentEditRightSidebarBuilder::BTN_TRIGGER_CLASS,
-                'data-click' => '#ezplatform_content_forms_content_edit_publish_hidden',
+                'data-click' => '#ezplatform_content_forms_content_edit_publishLater',
             ];
             $item = $this->factory->createItem(
-                self::ITEM__PUBLISH_HIDDEN,
+                self::ITEM__PUBLISH_LATER,
                 [
                     'attributes' => $canPublish
-                        ? $publishHiddenAttributes
-                        : array_merge($publishHiddenAttributes, ContentEditRightSidebarBuilder::BTN_DISABLED_ATTR),
+                        ? $publishLaterAttributes
+                        : array_merge($publishLaterAttributes, ContentEditRightSidebarBuilder::BTN_DISABLED_ATTR),
                 ]
             );
+            $menu->addChild($item);
 
+            $hideLaterAttributes = [
+                'class' => ContentEditRightSidebarBuilder::BTN_TRIGGER_CLASS,
+                'data-click' => '#ezplatform_content_forms_content_edit_hideLater',
+            ];
+            $item = $this->factory->createItem(
+                self::ITEM__HIDE_LATER,
+                [
+                    'attributes' => $canPublish
+                        ? $hideLaterAttributes
+                        : array_merge($hideLaterAttributes, ContentEditRightSidebarBuilder::BTN_DISABLED_ATTR),
+                ]
+            );
             $menu->addChild($item);
 
             $manipulator = new MenuManipulator();
-            $manipulator->moveToPosition($menu[self::ITEM__PUBLISH_HIDDEN], -1);
+            $manipulator->moveToPosition($menu[self::ITEM__PUBLISH_LATER], -1);
         }
     }
 
     public static function getTranslationMessages(): array
     {
         return [
-            (new Message(self::ITEM__PUBLISH_HIDDEN, 'ibexa_menu'))->setDesc('Publish hidden'),
+            (new Message(self::ITEM__PUBLISH_LATER, 'ibexa_menu'))->setDesc('Publish later'),
+            (new Message(self::ITEM__HIDE_LATER, 'ibexa_menu'))->setDesc('Hide later'),
         ];
     }
 }

@@ -6,35 +6,15 @@
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
     </header>
     <body>
-      <trans-unit id="34d8b60fe25332f7b98585e82e753eaf502c3e50" resname="Hide">
-        <source>Hide</source>
-        <target>Hide</target>
-        <note>key: Hide</note>
+      <trans-unit id="55fd3e57606f7cc04718ca90689631b9f3a51c14" resname="content_schedule_publish_later_form.hide_later">
+        <source>Hide later</source>
+        <target state="new">Hide later</target>
+        <note>key: content_schedule_publish_later_form.hide_later</note>
       </trans-unit>
-      <trans-unit id="d97d1ee339e4eeaba8cac91dca37c8b4ec8f5501" resname="Show">
-        <source>Show</source>
-        <target>Show</target>
-        <note>key: Show</note>
-      </trans-unit>
-      <trans-unit id="e3bf62bb7f5af7ba291b2df1a11d573bdb55d7e9" resname="Trash">
-        <source>Trash</source>
-        <target>Trash</target>
-        <note>key: Trash</note>
-      </trans-unit>
-      <trans-unit id="9e3c743fb052b12d69896a30ee9a6e1bb0c41427" resname="content_location_remove_form.remove">
-        <source>Delete</source>
-        <target>Delete</target>
-        <note>key: content_location_remove_form.remove</note>
-      </trans-unit>
-      <trans-unit id="01adc416dac7e2f9a38316e265f62724e8a11974" resname="content_schedule_add_type.add">
-        <source>Add schedule</source>
-        <target>Add schedule</target>
-        <note>key: content_schedule_add_type.add</note>
-      </trans-unit>
-      <trans-unit id="e76b053547add44cfd9e5f7d0f26bf7d2e2d1155" resname="content_schedule_update_type.update">
-        <source>Update schedule</source>
-        <target>Update schedule</target>
-        <note>key: content_schedule_update_type.update</note>
+      <trans-unit id="f17953d32f43eea39fa125c92f120d4e2f398e2b" resname="content_schedule_publish_later_form.publish_later">
+        <source>Publish later</source>
+        <target>Publish later</target>
+        <note>key: content_schedule_publish_later_form.publish_later</note>
       </trans-unit>
     </body>
   </file>

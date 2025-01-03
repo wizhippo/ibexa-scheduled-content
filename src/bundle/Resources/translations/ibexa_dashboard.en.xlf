@@ -41,11 +41,6 @@
         <target>Remark</target>
         <note>key: dashboard.table.remark</note>
       </trans-unit>
-      <trans-unit id="19430d64c887a2ac5cfc75f006b24b85311d2840" resname="tab.name.wzh_everyone_content_schedule">
-        <source>Content Schedule</source>
-        <target>Content Schedule</target>
-        <note>key: tab.name.wzh_everyone_content_schedule</note>
-      </trans-unit>
     </body>
   </file>
 </xliff>

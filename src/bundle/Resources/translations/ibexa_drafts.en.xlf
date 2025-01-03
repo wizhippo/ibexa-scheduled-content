@@ -6,11 +6,6 @@
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
     </header>
     <body>
-      <trans-unit id="bb473c4c27cf6c576038efc17854f587fa6e175d" resname="hide.later">
-        <source>Hide later</source>
-        <target state="new">Hide later</target>
-        <note>key: hide.later</note>
-      </trans-unit>
       <trans-unit id="4fc1ccdde5a30b4b9d6e0685cd3c6ba3c3b9102e" resname="publish.later">
         <source>Publish later</source>
         <target>Publish later</target>

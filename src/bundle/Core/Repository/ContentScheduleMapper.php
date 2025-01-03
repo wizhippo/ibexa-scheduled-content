@@ -23,6 +23,7 @@ final class ContentScheduleMapper
             $schedules[$spiSchedule->id] = new Schedule([
                 'id' => $spiSchedule->id,
                 'contentId' => $spiSchedule->contentId,
+                'versionNo' => $spiSchedule->versionNo,
                 'eventDateTime' => $this->getDateTime($spiSchedule->eventDateTime),
                 'eventAction' => $spiSchedule->eventAction,
                 'remark' => $spiSchedule->remark,

@@ -137,6 +137,10 @@ final class DoctrineDatabase extends Gateway
                 ':content_id'
             )
             ->setValue(
+                'version_no',
+                ':version_no'
+            )
+            ->setValue(
                 'event_date_time',
                 ':event_date_time'
             )
@@ -149,6 +153,7 @@ final class DoctrineDatabase extends Gateway
                 ':remark'
             )
             ->setParameter('content_id', $createStruct->contentId, Types::INTEGER)
+            ->setParameter('version_no', $createStruct->versionNo, Types::INTEGER)
             ->setParameter('event_date_time', $createStruct->eventDateTime, Types::INTEGER)
             ->setParameter('event_action', $createStruct->eventAction, Types::STRING)
             ->setParameter('remark', $createStruct->remark, Types::STRING)

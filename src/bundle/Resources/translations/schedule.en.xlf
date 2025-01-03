@@ -11,11 +11,6 @@
         <target>Schedule '%id%' added.</target>
         <note>key: schedule.add.success</note>
       </trans-unit>
-      <trans-unit id="65657178b7a9b2b53fbb449aa5075ea02899cd12" resname="schedule.delete.success">
-        <source>Schedule '%id%' removed.</source>
-        <target>Schedule '%id%' removed.</target>
-        <note>key: schedule.delete.success</note>
-      </trans-unit>
     </body>
   </file>
 </xliff>

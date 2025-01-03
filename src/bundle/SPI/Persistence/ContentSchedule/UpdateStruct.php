@@ -11,8 +11,4 @@ final class UpdateStruct extends ValueObject
     public int $eventDateTime;
 
     public string $eventAction;
-
-    public ?string $remark;
-
-    public ?int $evaluatedDateTime;
 }

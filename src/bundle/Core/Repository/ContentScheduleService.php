@@ -142,6 +142,7 @@ final class ContentScheduleService implements ContentScheduleServiceInterface
 
         $createStruct = new CreateStruct();
         $createStruct->contentId = $scheduleCreateStruct->contentId;
+        $createStruct->versionNo = $scheduleCreateStruct->versionNo;
         $createStruct->eventDateTime = $scheduleCreateStruct->eventDateTime->getTimestamp();
         $createStruct->eventAction = $scheduleCreateStruct->eventAction;
         $createStruct->remark = $scheduleCreateStruct->remark;
@@ -208,8 +209,19 @@ final class ContentScheduleService implements ContentScheduleServiceInterface
         $this->repository->beginTransaction();
 
         try {
-            $contentInfo = $this->repository->getContentService()->loadContentInfo($schedule->contentId);
-            if ($contentInfo->status !== ContentInfo::STATUS_PUBLISHED) {
+            $versionInfo = $this->repository->getContentService()->loadVersionInfoById(
+                $schedule->contentId,
+                $schedule->versionNo,
+            );
+            $contentInfo = $versionInfo->getContentInfo();
+
+            if ($schedule->eventAction === Schedule::ACTION_PUBLISH && $contentInfo->status === ContentInfo::STATUS_DRAFT) {
+                if (!$isDryRun) {
+                    $this->repository->getContentService()->publishVersion($versionInfo);
+                }
+                $msg = "Schedule: {$schedule->id} {$schedule->eventDateTime->format(DATE_W3C)} Action: Publish";
+                $this->logger->info($msg);
+            } elseif ($contentInfo->status !== ContentInfo::STATUS_PUBLISHED) {
                 $msg = "Content {$contentInfo->id} for schedule {$schedule->id} is not published taking no action";
                 $this->logger->info($msg);
             } else {

@@ -10,26 +10,22 @@ use Ibexa\Contracts\Core\Repository\Values\ValueObject;
 /**
  * @property-read int $id Schedule ID
  * @property-read int $contentId Content ID
+ * @property-read ?int $versionNo Version No
  * @property-read DateTimeImmutable $eventDateTime Event effect datetime
  * @property-read string $eventAction Name of the action to perform
- * @property-read string $remark Remark to describe why the schedule
- * @property-read ?DateTimeImmutable $evaluatedDateTime Indicates when processed
  */
 class Schedule extends ValueObject
 {
-    public const ACTION_SHOW = 'show';
-    public const ACTION_HIDE = 'hide';
-    public const ACTION_TRASH = 'trash';
+    public const ACTION_PUBLISH = 1;
+    public const ACTION_HIDE = 2;
 
     protected int $id;
 
     protected int $contentId;
 
+    protected ?int $versionNo = null;
+
     protected DateTimeImmutable $eventDateTime;
 
     protected string $eventAction;
-
-    protected ?string $remark;
-
-    protected ?DateTimeImmutable $evaluatedDateTime;
 }

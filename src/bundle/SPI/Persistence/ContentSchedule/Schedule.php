@@ -12,11 +12,9 @@ final class Schedule extends ValueObject
 
     public int $contentId;
 
+    public ?int $versionNo = null;
+
     public int $eventDateTime;
 
     public string $eventAction;
-
-    public ?string $remark;
-
-    public ?int $evaluatedDateTime;
 }

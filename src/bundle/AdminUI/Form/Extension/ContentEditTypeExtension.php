@@ -20,8 +20,14 @@ class ContentEditTypeExtension extends AbstractTypeExtension
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('publish_hidden', SubmitType::class, [
-                'label' => /** @Desc("Publish hidden") */ 'publish.hidden',
+            ->add('publishLater', SubmitType::class, [
+                'label' => /** @Desc("Publish later") */ 'publish.later',
+                'attr' => [
+                    'hidden' => true,
+                ],
+            ])
+            ->add('hideLater', SubmitType::class, [
+                'label' => /** @Desc("Hide later") */ 'hide.later',
                 'attr' => [
                     'hidden' => true,
                 ],

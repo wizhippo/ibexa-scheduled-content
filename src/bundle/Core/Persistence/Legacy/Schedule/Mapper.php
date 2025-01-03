@@ -15,6 +15,7 @@ class Mapper
 
         $schedule->id = (int)$row['id'];
         $schedule->contentId = (int)$row['content_id'];
+        $schedule->versionNo = (int)$row['version_no'];
         $schedule->eventDateTime = (int)$row['event_date_time'];
         $schedule->eventAction = (string)$row['event_action'];
         $schedule->remark = $row['remark'];

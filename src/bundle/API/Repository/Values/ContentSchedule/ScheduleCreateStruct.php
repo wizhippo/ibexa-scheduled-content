@@ -7,4 +7,6 @@ namespace Wizhippo\ScheduledContentBundle\API\Repository\Values\ContentSchedule;
 final class ScheduleCreateStruct extends ScheduleStruct
 {
     public int $contentId;
+
+    public ?int $versionNo = null;
 }

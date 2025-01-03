@@ -2,32 +2,37 @@
 
 declare(strict_types=1);
 
-namespace Wizhippo\ScheduledContentBundle\AdminUI\Form\Type\Content\Location;
+namespace Wizhippo\ScheduledContentBundle\AdminUI\Form\Type\Content;
 
-use Ibexa\AdminUi\Form\Type\Content\ContentInfoType;
+use Ibexa\AdminUi\Form\Type\Content\VersionInfoType;
+use Ibexa\AdminUi\Form\Type\DateTimePickerType;
 use JMS\TranslationBundle\Annotation\Desc;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Wizhippo\ScheduledContentBundle\AdminUI\Form\Data\Content\Location\ContentScheduleAddData;
+use Wizhippo\ScheduledContentBundle\AdminUI\Form\Data\Content\ContentPublishLaterData;
 
-class ContentScheduleAddType extends AbstractType
+class ContentPublishLaterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add(
-                'content_info',
-                ContentInfoType::class,
+                'version_info',
+                VersionInfoType::class,
                 ['label' => false]
             )
             ->add(
-                'add',
+                'publish_date_time',
+                DateTimePickerType::class
+            )
+            ->add(
+                'publish_later',
                 SubmitType::class,
                 [
-                    'label' => /** @Desc("Add schedule") */
-                        'content_schedule_add_type.add',
+                    'label' => /** @Desc("Publish later") */
+                        'content_schedule_publish_later_form.publish_later',
                 ]
             )
         ;
@@ -36,13 +41,8 @@ class ContentScheduleAddType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ContentScheduleAddData::class,
+            'data_class' => ContentPublishLaterData::class,
             'translation_domain' => 'forms',
         ]);
-    }
-
-    public function getParent()
-    {
-        return ContentScheduleType::class;
     }
 }

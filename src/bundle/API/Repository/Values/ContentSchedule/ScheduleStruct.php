@@ -11,7 +11,7 @@ abstract class ScheduleStruct extends ValueObject
 {
     public DateTimeImmutable $eventDateTime;
 
-    public string $eventAction;
+    public int $eventAction;
 
-    public ?string $remark = null;
+    public ?int $versionNo = null;
 }

@@ -11,11 +11,6 @@
         <target>Content Schedules</target>
         <note>key: tab.locations.content_schedules</note>
       </trans-unit>
-      <trans-unit id="aec2ad21454a682050004dac7b9438bae8ff3cf8" resname="tab.name.wzh-schedule">
-        <source>Content Schedule</source>
-        <target>Content Schedule</target>
-        <note>key: tab.name.wzh-schedule</note>
-      </trans-unit>
       <trans-unit id="d5621aee5735272d3a03c13d27107adf6cfca72f" resname="tab.schedules.action.delete">
         <source>Delete</source>
         <target>Delete</target>

@@ -7,12 +7,10 @@ namespace Wizhippo\ScheduledContentBundle\AdminUI\Form\Factory;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Util\StringUtil;
-use Wizhippo\ScheduledContentBundle\AdminUI\Form\Data\Content\Location\ContentScheduleAddData;
-use Wizhippo\ScheduledContentBundle\AdminUI\Form\Data\Content\Location\ContentScheduleDeleteData;
-use Wizhippo\ScheduledContentBundle\AdminUI\Form\Data\Content\Location\ContentScheduleUpdateData;
-use Wizhippo\ScheduledContentBundle\AdminUI\Form\Type\Content\Location\ContentScheduleAddType;
-use Wizhippo\ScheduledContentBundle\AdminUI\Form\Type\Content\Location\ContentScheduleDeleteType;
-use Wizhippo\ScheduledContentBundle\AdminUI\Form\Type\Content\Location\ContentScheduleUpdateType;
+use Wizhippo\ScheduledContentBundle\AdminUI\Form\Data\Content\ContentHideLaterData;
+use Wizhippo\ScheduledContentBundle\AdminUI\Form\Data\Content\ContentPublishLaterData;
+use Wizhippo\ScheduledContentBundle\AdminUI\Form\Type\Content\ContentHideLaterType;
+use Wizhippo\ScheduledContentBundle\AdminUI\Form\Type\Content\ContentPublishLaterType;
 
 class FormFactory
 {
@@ -21,30 +19,25 @@ class FormFactory
     ) {
     }
 
-    public function addSchedule(
-        ContentScheduleAddData $data = null,
-        ?string $name = null
+    public function publishLater(
+        ?ContentPublishLaterData $data = null,
+        ?string $name = null,
+        array $options = []
     ): FormInterface {
-        $name = $name ?: StringUtil::fqcnToBlockPrefix(ContentScheduleAddType::class);
+        $name = $name ?: StringUtil::fqcnToBlockPrefix(ContentPublishLaterType::class);
+        $data = $data ?? new ContentPublishLaterData();
 
-        return $this->formFactory->createNamed($name, ContentScheduleAddType::class, $data);
+        return $this->formFactory->createNamed($name, ContentPublishLaterType::class, $data, $options);
     }
 
-    public function deleteSchedule(
-        ContentScheduleDeleteData $data = null,
-        ?string $name = null
+    public function hideLater(
+        ?ContentHideLaterData $data = null,
+        ?string $name = null,
+        array $options = []
     ): FormInterface {
-        $name = $name ?: StringUtil::fqcnToBlockPrefix(ContentScheduleDeleteType::class);
+        $name = $name ?: StringUtil::fqcnToBlockPrefix(ContentHideLaterType::class);
+        $data = $data ?? new ContentHideLaterData();
 
-        return $this->formFactory->createNamed($name, ContentScheduleDeleteType::class, $data);
-    }
-
-    public function updateSchedule(
-        ContentScheduleUpdateData $data = null,
-        ?string $name = null
-    ): FormInterface {
-        $name = $name ?: StringUtil::fqcnToBlockPrefix(ContentScheduleUpdateType::class);
-
-        return $this->formFactory->createNamed($name, ContentScheduleUpdateType::class, $data);
+        return $this->formFactory->createNamed($name, ContentHideLaterData::class, $data, $options);
     }
 }

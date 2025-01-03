@@ -1,4 +1,3 @@
 wzh_schedule:
-  read: ~
-  add: ~
-  delete: ~
+  publish_later: ~
+  hide_later: ~
